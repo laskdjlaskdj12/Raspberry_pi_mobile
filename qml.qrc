@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Page1.qml</file>
+        <file>Page1Form.ui.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>Login_Window.qml</file>
+        <file>Boiler_Indicator_panel.qml</file>
+        <file>Loding_Screen.qml</file>
+        <file>Dial_List_Model.qml</file>
+        <file>Dial_List_Delicate.qml</file>
+        <file>Main_Window.qml</file>
+        <file>Account_menu_panel.qml</file>
+        <file>Device_Add_Page.qml</file>
+        <file>Rectangle_Design_Form.qml</file>
+    </qresource>
+</RCC>
