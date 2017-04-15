@@ -29,6 +29,10 @@ public slots:
 
     void timeout_to_device();
 
+signals:
+
+    void send_timeout();
+
 private:
     QString ip_;
     Qt_Json_Socket_Lib* lib;

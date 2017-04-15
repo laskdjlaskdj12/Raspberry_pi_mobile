@@ -11,8 +11,8 @@ adjust_device_controler::adjust_device_controler(QObject *parent) : device_contr
         QStringList _t_list_;
         bool        is_table_exsist = false;
 
-        if (db_.isDriverAvailable ("Client_device_list")){
-            db_.database ("Client_devicE_list");
+        if (db_.contains ("Client_device_list")){
+            db_.database ("Client_device_list");
 
         } else {
             db_.addDatabase ("SQLITE","Client_device_list");
@@ -43,7 +43,7 @@ adjust_device_controler::adjust_device_controler(QObject *parent) : device_contr
 
         }
 
-        //안드로이드 전화번호가 필요함
+        //안드로이드 전화번호가 필요함 일단 볼드 처리
         //owner_phone_number_ =
 
     }catch(Boiler_Controler_Exception& e){
@@ -77,8 +77,8 @@ int adjust_device_controler::add_device()
 
         QSqlQuery db_query(db_);
 
-        db_query.prepare ("INSERT INTO `Device_list`(`device_type`, `device_name`, `device_pid, `identify_mobile_number`, `device_gpio`, `access_mobile_number`, `device_active`)"
-                          "VALUES (:type, :name, :identify_mobile_number, :pid, :gpio, :access_mobile, :device_active);");
+        db_query.prepare ("INSERT INTO `Device_list`(`device_type`, `device_name`, `device_pid, `device_gpio`, `access_mobile_number`, `device_active`)"
+                          "VALUES (:type, :name, :pid, :gpio, :access_mobile, :device_active);");
 
         //임시로 pid를 0으로 설정
         db_query.bindValue (":pid", "0");

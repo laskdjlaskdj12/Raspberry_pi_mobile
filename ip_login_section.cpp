@@ -54,9 +54,10 @@ QJsonObject Ip_Login_Section::send_connect_Json_Synctes()
 
 }
 
+//디바이스 타임아웃시 패널에 전송을 함
 void Ip_Login_Section::timeout_to_device()
 {
-
+    emit send_timeout ();
 }
 
 

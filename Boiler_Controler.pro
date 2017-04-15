@@ -8,7 +8,8 @@ SOURCES += main.cpp \
     ip_login_section.cpp \
     boiler_controler_exception.cpp \
     adjust_device_contrler.cpp \
-    qt_json_socket_lib.cpp
+    qt_json_socket_lib.cpp \
+    unit_test.cpp
 
 RESOURCES += qml.qrc
 
