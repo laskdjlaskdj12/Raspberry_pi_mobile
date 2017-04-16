@@ -23,15 +23,17 @@ void Ip_Login_Section::set_ip(QString ip){  ip_ = ip;}
 int Ip_Login_Section::login_to_device()
 {
     try{
+
         QJsonDocument _doc_;
         QHostAddress addr(ip_);
+
         lib->connect_server (addr,43100);
 
         if ( lib->send_Json (send_connect_Json_Synctes ()) == false){    throw Boiler_Controler_Exception(lib->get_socket ()->errorString (), __LINE__);}
 
         _doc_ = lib->recv_Json ();
 
-        if (_doc_.isNull ()){    throw Boiler_Controler_Exception(QString("Recv_Json document fail"), __LINE__);}
+        if (_doc_.isNull () || _doc_.isEmpty ()){    throw Boiler_Controler_Exception(QString("Recv_Json document fail"), __LINE__);}
 
         return 0;
 

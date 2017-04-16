@@ -1,4 +1,4 @@
-#ifndef QT_JSON_SOCKET_LIB_GLOBAL_H
+/*#ifndef QT_JSON_SOCKET_LIB_GLOBAL_H
 #define QT_JSON_SOCKET_LIB_GLOBAL_H
 
 #include <QtCore/qglobal.h>
@@ -9,4 +9,4 @@
 #  define QT_JSON_SOCKET_LIBSHARED_EXPORT Q_DECL_IMPORT
 #endif
 
-#endif // QT_JSON_SOCKET_LIB_GLOBAL_H
+#endif // QT_JSON_SOCKET_LIB_GLOBAL_H*/

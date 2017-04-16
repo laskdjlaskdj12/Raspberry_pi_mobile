@@ -9,7 +9,7 @@
 #include <QString>
 #include <QMetaMethod>
 
-class QT_JSON_SOCKET_LIBSHARED_EXPORT Qt_Json_Socket_Lib:public QObject
+class /*QT_JSON_SOCKET_LIBSHARED_EXPORT*/ Qt_Json_Socket_Lib:public QObject
 {
     Q_OBJECT
 

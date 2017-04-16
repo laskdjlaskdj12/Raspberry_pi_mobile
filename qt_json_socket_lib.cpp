@@ -145,7 +145,7 @@ QJsonDocument Qt_Json_Socket_Lib::recv_Json()
 {
     QByteArray arr = this->recv_QByteArray ();
 
-    QJsonDocument Json_doc;
+    QJsonDocument Json_doc ;
 
     //만약 arr의 리턴값이 NULL일 경우
     if(arr == "NULL"){

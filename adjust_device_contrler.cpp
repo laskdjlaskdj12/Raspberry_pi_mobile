@@ -11,11 +11,12 @@ adjust_device_controler::adjust_device_controler(QObject *parent) : device_contr
         QStringList _t_list_;
         bool        is_table_exsist = false;
 
-        if (db_.contains ("Client_device_list")){
+        if (QSqlDatabase::contains ("Client_device_list")){
             db_.database ("Client_device_list");
 
         } else {
-            db_.addDatabase ("SQLITE","Client_device_list");
+
+            db_ = QSqlDatabase::addDatabase ("QSQLITE","Client_device_list");
             db_.setDatabaseName ("Client_device_list.db");
         }
 
@@ -39,7 +40,7 @@ adjust_device_controler::adjust_device_controler(QObject *parent) : device_contr
                                "`access_mobile_number`	INTEGER NOT NULL,"
                                "`device_active`	INTEGER NOT NULL,"
                                "PRIMARY KEY(`device_pid`)"
-                               ");") != true){ throw Boiler_Controler_Exception(db_query.lastError ().text(), __LINE__);}
+                               ");") == false){ throw Boiler_Controler_Exception(db_query.lastError ().text(), __LINE__);}
 
         }
 
@@ -48,8 +49,7 @@ adjust_device_controler::adjust_device_controler(QObject *parent) : device_contr
 
     }catch(Boiler_Controler_Exception& e){
 
-
-        qDebug()<<e.get_error_string ();
+        e.get_error();
     }
 }
 
@@ -75,7 +75,7 @@ int adjust_device_controler::add_device()
 {
     try{
 
-        QSqlQuery db_query(db_);
+        QSqlQuery db_query (db_);
 
         db_query.prepare ("INSERT INTO `Device_list`(`device_type`, `device_name`, `device_pid, `device_gpio`, `access_mobile_number`, `device_active`)"
                           "VALUES (:type, :name, :pid, :gpio, :access_mobile, :device_active);");
@@ -91,24 +91,25 @@ int adjust_device_controler::add_device()
         db_query.bindValue (":access_mobile", 0);
         db_query.bindValue (":device_active",(int)true);
 
-        if (db_query.exec () != true){   throw Boiler_Controler_Exception(db_query.lastError ().text (), __LINE__);}
+        if (db_query.exec () == false){   throw Boiler_Controler_Exception(db_query.lastError ().text (), __LINE__);}
 
         qDebug()<<"====================[Json_Info]====================";
-        qDebug()<<QString(QJsonDocument(add_device_json_form ()).toJson ());
+        qDebug()<<QString (QJsonDocument(add_device_json_form ()).toJson ());
 
-        if (net_con.send_Object (add_device_json_form ()) != true){   throw Boiler_Controler_Exception("add_device sending add_Json_protocol fail",__LINE__);}
+        if (net_con.send_Object (add_device_json_form ()) == false){   throw Boiler_Controler_Exception("add_device sending add_Json_protocol fail",__LINE__);}
 
         QJsonObject _device_add_return_ = net_con.recv_Object ();
 
         if (_device_add_return_.isEmpty ()){ throw Boiler_Controler_Exception("Recv from server by add device protocol is fail", __LINE__);}
 
         qDebug()<<"====================[Json_Info]====================";
-        qDebug()<<QString(QJsonDocument(_device_add_return_).toJson ());
+        qDebug()<<QString (QJsonDocument(_device_add_return_).toJson ());
 
 
-        if (_device_add_return_["error"].isNull () != true){ throw Boiler_Controler_Exception(_device_add_return_["message"].toString (), __LINE__);}
+        if (_device_add_return_["error"].isNull () == false){ throw Boiler_Controler_Exception(_device_add_return_["message"].toString (), __LINE__);}
 
 
+        //서버에서 리턴되는 pid수신후 pid를 적
         db_query.prepare ("UPDATE `Device_list` SET `device_pid`= (:pid), `device_hash`= (:hash) WHERE `device_type`= (:type), `device_name`= (:name), `device_gpio`= (:gpio);");
         db_query.bindValue (":pid", _device_add_return_["pid"].toString ());
         db_query.bindValue (":hash", _device_add_return_["hash"].toString ());
@@ -116,14 +117,14 @@ int adjust_device_controler::add_device()
         db_query.bindValue (":name", temp_name_);
         db_query.bindValue (":gpio", temp_device_gpio_);
 
-        if (db_query.exec () != true){   throw Boiler_Controler_Exception(db_query.lastError ().text (), __LINE__);}
+        if (db_query.exec () == false){   throw Boiler_Controler_Exception(db_query.lastError ().text (), __LINE__);}
 
 
         return 0;
 
     }catch(Boiler_Controler_Exception& e){
 
-        qDebug()<<e.get_error_string ();
+        e.get_error();
         return -1;
     }
 }
@@ -133,7 +134,7 @@ int adjust_device_controler::remove_device(int pid)
     try{
 
         QSqlQuery sql_query(db_);
-        if (db_.isOpen () != true || db_.isValid () != true){
+        if (db_.isOpen () == false || db_.isValid () == false){
 
             qDebug()<<"[Debug] : db is not open ";
             return -1;
@@ -144,14 +145,14 @@ int adjust_device_controler::remove_device(int pid)
         sql_query.prepare ("SELECT * FROM `Device_list` WHERE `device_pid` = :pid ;");
         sql_query.bindValue (":pid", QString::number(pid));
 
-        if (sql_query.exec () != true){  throw sql_query.lastError ();}
+        if (sql_query.exec () == false){  throw sql_query.lastError ();}
 
         sql_query.last ();
 
         //return 2의 의미는 제거를 할수없으므로 db에 해당 pid를 존치를 한다는 의미
         if (sql_query.at () + 1 == 0){  return 2;}
 
-        if (net_con.send_Object (remove_device_json_form (QString::number(pid))) != true){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
+        if (net_con.send_Object (remove_device_json_form (QString::number(pid))) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
 
         QJsonObject _device_add_return_ = net_con.recv_Object ();
 
@@ -160,14 +161,14 @@ int adjust_device_controler::remove_device(int pid)
         sql_query.prepare ("DELETE FROM `Device_list` WHERE `device_pid` = :pid ;");
         sql_query.bindValue (":pid", QString::number (pid));
 
-        if (sql_query.exec () != true){  throw sql_query.lastError ();}
+        if (sql_query.exec () == false){  throw sql_query.lastError ();}
 
         qDebug()<<"[Info] : =================== Success delete ["<< pid <<"] ===================";
 
         return 0;
 
     }catch(Boiler_Controler_Exception& e){
-        qDebug()<< e.get_error_string ();
+        e.get_error();
         return -1;
     }
 }
@@ -177,18 +178,18 @@ int adjust_device_controler::update_device_info(int pid)
     try{
 
 
-        if(net_con.send_Object ( update_device_json_form (QString::number (pid))) != true){   throw Boiler_Controler_Exception("add_device sending add_Json_protocol fail", __LINE__);}
+        if(net_con.send_Object ( update_device_json_form (QString::number (pid))) == false){   throw Boiler_Controler_Exception("add_device sending add_Json_protocol fail", __LINE__);}
 
         QJsonObject _device_add_return_ = net_con.recv_Object ();
 
         if (_device_add_return_.isEmpty ()){ throw Boiler_Controler_Exception("Recv from server by add device protocol is fail", __LINE__);}
 
-        if (_device_add_return_["error"].isNull () != true){ throw Boiler_Controler_Exception(_device_add_return_["message"].toString (), __LINE__);}
+        if (_device_add_return_["error"].isNull () == false){ throw Boiler_Controler_Exception(_device_add_return_["message"].toString (), __LINE__);}
 
         return 0;
 
     }catch(Boiler_Controler_Exception& e){
-        qDebug()<<e.get_error_string ();
+        e.get_error();
         return -1;
     }
 }
@@ -201,13 +202,13 @@ int adjust_device_controler::check_device_state()
         qDebug()<<"================== check_raspberry_device ==================";
         //라즈베리파이에 등록된 디바이스들의 갯수를 db에 찾아서 출력함
 
-        /*if (db_query.exec ("SELECT COUNT(*) FROM `Device_list`;") != true){     throw db_query.lastError (); }
+        /*if (db_query.exec ("SELECT COUNT(*) FROM `Device_list`;") == false){     throw db_query.lastError ().text (); }
 
         device_list_size = db_query.value (0).toInt ();
 
         db_query.clear ();*/
 
-        if (db_query.exec ("SELECT * FROM `Device_list`;")!= true){     throw Boiler_Controler_Exception(db_query.lastError ().text (), __LINE__); }
+        if (db_query.exec ("SELECT * FROM `Device_list`;")== false){     throw Boiler_Controler_Exception(db_query.lastError ().text (), __LINE__); }
 
         db_query.last ();
 
@@ -239,7 +240,7 @@ int adjust_device_controler::check_device_state()
     }
 
     catch(Boiler_Controler_Exception& e){
-        qDebug()<<e.get_error_string ();
+        e.get_error();
         return -1;
 
     }
@@ -253,7 +254,7 @@ int adjust_device_controler::add_auto_upgrade_code()
 
 int adjust_device_controler::set_device_tempture(int pid, int tempture)
 {
-    if (net_con.send_Object (set_device_tempture_json_form (QString::number (pid), tempture)) != true){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
+    if (net_con.send_Object (set_device_tempture_json_form (QString::number (pid), tempture)) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
 
     QJsonObject _device_add_return_ = net_con.recv_Object ();
 
@@ -264,7 +265,7 @@ int adjust_device_controler::set_device_tempture(int pid, int tempture)
 
 int adjust_device_controler::get_device_tempture(int pid)
 {
-    if (net_con.send_Object (get_device_tempture_json_form (QString::number(pid))) != true){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
+    if (net_con.send_Object (get_device_tempture_json_form (QString::number(pid))) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
 
     QJsonObject _device_add_return_ = net_con.recv_Object ();
 
