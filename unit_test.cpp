@@ -14,12 +14,15 @@
 #include <QSqlQuery>
 #include <QSqlError>
 
+#include <QCryptographicHash>
+
 #include "qt_json_socket_lib.h"
 
 //unit_test_package
 #include "ip_login_section.h"
 #include "adjust_device_contrler.h"
 
+#define PID_ARR_SIZ 1024
 
 class Unit_test_Server:public QObject{
     Q_OBJECT
@@ -32,9 +35,12 @@ public:
 
         connect (temp_serv, SIGNAL(newConnection()), this, SLOT(start_server_recv()));
 
+        pid_arr = new int[PID_ARR_SIZ];
+
         lib->set_connect_timeout (3000);
         lib->set_recv_timeout (3000);
         lib->set_send_timeout (3000);
+
 
     }
 
@@ -76,16 +82,96 @@ public slots:
 
             snd_obj["connect"] = true;
 
+            obj = rcv_doc.object ();
+
+            if(obj["device"].isNull () == false){
+
+                snd_obj["connect"] = true;
+                snd_obj["device"]  = true;
+
+                if(lib->send_Json (snd_obj) == false){  qDebug()<<"[Debug_Error] : "<< lib->get_socket ()->errorString ();}
+                if((rcv_doc = lib->recv_Json ()).isEmpty ()){ qDebug()<<"[Debug_Error] : "<<lib->get_socket ()->errorString ();}
+
+
+                obj = rcv_doc.object ();
+
+                qDebug()<<"=================================";
+                qDebug()<<(QString)rcv_doc.toJson(QJsonDocument::Indented);
+                qDebug()<<"=================================";
+                qDebug()<<"\n\n\n\n\n";
+
+
+                if (obj["add_device"].toBool () == true){
+
+                  snd_obj = add_socket_process ();
+
+
+                } else if(obj["remove_device"].isNull () == false){
+
+
+                } else if (obj["update_device"].isNull ()== false){
+
+                } else if (obj["tempture"].isNull () == false){
+
+                    snd_obj["tempture"] = obj["tempture"].toInt ();
+                }
+            }
+
             if (lib->send_Json (snd_obj) == false){   throw QString("[Debug] : Error of Sending_Json");}
+
+            //lib를 disconnect함
+            lib->disconnect_socket ();
 
         }catch(QString& e){
             qDebug()<<"[Error] : "<< e;
         }
 
     }
+
+private:
+    QJsonObject add_socket_process (){
+
+        QJsonObject snd_obj;
+
+        int rand_pid;
+        bool rand_pid_valid = true;
+
+        do{
+
+            int temp_rand_pid = qrand ();
+
+            for(int i = 0; i < PID_ARR_SIZ; i++){
+
+                if ( pid_arr[i] != true){
+
+                    rand_pid = temp_rand_pid;
+                    rand_pid_valid = false;
+                    break;
+                }
+            }
+
+        }while(rand_pid_valid);
+
+        snd_obj["pid"] = rand_pid;
+        snd_obj["hash"] = "test_hash";
+
+        return snd_obj;
+    }
+
+    QJsonObject remove_socket_process (){
+
+    }
+
+    QJsonObject update_socket_process (){
+
+
+    }
+
 private:
     Qt_Json_Socket_Lib* lib;
     QTcpServer*         temp_serv;
+    int*                pid_arr;
+
 
 };
 
@@ -121,21 +207,21 @@ signals:
 private slots:
     void ip_login_selection();
     void add_device();
-    void add_device_duplicate();
+    /*void add_device_duplicate();
     void remove_device();
     void update_device();
     void check_device();
     void set_device_tempture();
-    void get_device_tempture();
+    void get_device_tempture();*/
 
 private:
 
     Unit_test_Server* serv;
     Ip_Login_Section* ip_login;
     adjust_device_controler* controler;
-    QThread thread;
+    QThread* thread;
 
-    //QSqlDatabase db;
+    QSqlDatabase db;
 };
 
 //가상 서버를 먼저 생성
@@ -145,46 +231,25 @@ Unit_test::Unit_test(QObject *parent)
     serv = new Unit_test_Server;
     controler = new adjust_device_controler;
     ip_login = new Ip_Login_Section;
+    thread = new QThread;
 
-    serv->moveToThread (&thread);
+    serv->moveToThread (thread);
 
     //쓰레드 start 시그널 바인딩을 Unit_test_Server를 listen하도록 바인딩 시킴
-    connect (&thread, SIGNAL(started()), serv, SLOT(start_Unit_test_server()));
+    connect (thread, SIGNAL(started()), serv, SLOT(start_Unit_test_server()));
 
     //쓰레드를 시작함
-    thread.start ();
-
-
-}
-
-
-Unit_test::~Unit_test()
-{
-    serv->deleteLater ();
-    controler->deleteLater ();
-}
-
-
-void Unit_test::ip_login_selection()
-{
-    ip_login->set_ip ("127.0.0.1");
-    QCOMPARE (ip_login->login_to_device (), 0);
-}
-
-void Unit_test::add_device()
-{
-
-    QSqlDatabase db;
+    thread->start ();
 
     //db로드
     if (QSqlDatabase::contains ("Client_device_list")){
-        db.database ("Client_device_list");
+        db = QSqlDatabase::database ("Client_device_list");
 
     } else {
 
         db = QSqlDatabase::addDatabase ("QSQLITE", "Client_device_list");
 
-        if(db.isValid () != true){
+        if(db.isValid () == false){
             qDebug()<<"[Error_Debug] : QSQLITE Driver is not loaded";
             return;
         }
@@ -197,6 +262,26 @@ void Unit_test::add_device()
         qDebug()<<"[Error_Debug] : "<<db.lastError ().text ();
     }
 
+
+}
+
+
+Unit_test::~Unit_test()
+{
+    serv->deleteLater ();
+    controler->deleteLater ();
+    thread->terminate ();
+}
+
+
+void Unit_test::ip_login_selection()
+{
+    ip_login->set_ip ("127.0.0.1");
+    QCOMPARE (ip_login->login_to_device (), 0);
+}
+
+void Unit_test::add_device()
+{
     QSqlQuery db_query(db);
 
     db_query.prepare ("SELECT `device_pid` FROM `Device_list` ");
@@ -224,7 +309,7 @@ void Unit_test::add_device()
     QCOMPARE(controler->add_device (), 0);
 }
 
-void Unit_test::add_device_duplicate()
+/*void Unit_test::add_device_duplicate()
 {
 
     controler->set_device_gpio (17);
@@ -235,22 +320,6 @@ void Unit_test::add_device_duplicate()
 
 void Unit_test::remove_device()
 {
-
-    QSqlDatabase db;
-
-    //db로드
-    if (QSqlDatabase::contains ("Client_device_list")){
-        db.database ("Client_device_list");
-
-    } else {
-
-        db = QSqlDatabase::addDatabase ("QSQLITE", "Client_device_list");
-        db.setDatabaseName ("Client_device_list.db");
-    }
-
-    if(db.open () == false){
-
-    }
 
     QSqlQuery db_query(db);
 
@@ -296,7 +365,7 @@ void Unit_test::set_device_tempture()
 void Unit_test::get_device_tempture()
 {
 
-}
+}*/
 
 QTEST_MAIN(Unit_test)
 #include "unit_test.moc"

@@ -34,7 +34,7 @@ bool tcp_connection::connect_raspberry(QString ip, bool adjust)
         QJsonObject obj;
         obj["connect"] = true;
 
-        //만약 조작이 true일경우
+        //만약 조작이 true 일경우
         if(adjust == true){
             obj["device"]  = true;
         }

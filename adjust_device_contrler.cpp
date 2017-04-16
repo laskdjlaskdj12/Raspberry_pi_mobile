@@ -12,7 +12,7 @@ adjust_device_controler::adjust_device_controler(QObject *parent) : device_contr
         bool        is_table_exsist = false;
 
         if (QSqlDatabase::contains ("Client_device_list")){
-            db_.database ("Client_device_list");
+            db_ = QSqlDatabase::database ("Client_device_list");
 
         } else {
 
@@ -29,6 +29,7 @@ adjust_device_controler::adjust_device_controler(QObject *parent) : device_contr
         }
 
         if (!is_table_exsist){
+
             QSqlQuery db_query(db_);
             if (db_query.exec ("CREATE TABLE `Device_list` ("
                                "`device_type`	TEXT NOT NULL,"
@@ -43,6 +44,7 @@ adjust_device_controler::adjust_device_controler(QObject *parent) : device_contr
                                ");") == false){ throw Boiler_Controler_Exception(db_query.lastError ().text(), __LINE__);}
 
         }
+
 
         //안드로이드 전화번호가 필요함 일단 볼드 처리
         //owner_phone_number_ =
@@ -77,13 +79,13 @@ int adjust_device_controler::add_device()
 
         QSqlQuery db_query (db_);
 
-        db_query.prepare ("INSERT INTO `Device_list`(`device_type`, `device_name`, `device_pid, `device_gpio`, `access_mobile_number`, `device_active`)"
+        db_query.prepare ("INSERT INTO `Device_list`(`device_type`, `device_name`, `device_pid`, `device_gpio`, `access_mobile_number`, `device_active`)"
                           "VALUES (:type, :name, :pid, :gpio, :access_mobile, :device_active);");
 
         //임시로 pid를 0으로 설정
-        db_query.bindValue (":pid", "0");
         db_query.bindValue (":type", temp_device_type_);
         db_query.bindValue (":name", temp_name_);
+        db_query.bindValue (":pid", "0");
         db_query.bindValue (":gpio", temp_device_gpio_);
 
         //현재 전화번호를 java를 임포트해야 얻을수있으므로 중단
@@ -96,6 +98,9 @@ int adjust_device_controler::add_device()
         qDebug()<<"====================[Json_Info]====================";
         qDebug()<<QString (QJsonDocument(add_device_json_form ()).toJson ());
 
+        if (net_con.connect_raspberry ("127.0.0.1", true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
+
+        qDebug()<<"====================[Send_Timing]====================";
         if (net_con.send_Object (add_device_json_form ()) == false){   throw Boiler_Controler_Exception("add_device sending add_Json_protocol fail",__LINE__);}
 
         QJsonObject _device_add_return_ = net_con.recv_Object ();
@@ -109,8 +114,8 @@ int adjust_device_controler::add_device()
         if (_device_add_return_["error"].isNull () == false){ throw Boiler_Controler_Exception(_device_add_return_["message"].toString (), __LINE__);}
 
 
-        //서버에서 리턴되는 pid수신후 pid를 적
-        db_query.prepare ("UPDATE `Device_list` SET `device_pid`= (:pid), `device_hash`= (:hash) WHERE `device_type`= (:type), `device_name`= (:name), `device_gpio`= (:gpio);");
+        //서버에서 리턴되는 pid와 hash를 db에 업데이트
+        db_query.prepare ("UPDATE `Device_list` SET `device_pid`= (:pid), `device_hash`= (:hash) WHERE `device_type`= (:type) AND `device_name`= (:name) AND `device_gpio`= (:gpio) AND `device_pid` = 0");
         db_query.bindValue (":pid", _device_add_return_["pid"].toString ());
         db_query.bindValue (":hash", _device_add_return_["hash"].toString ());
         db_query.bindValue (":type", temp_device_type_);
@@ -152,6 +157,8 @@ int adjust_device_controler::remove_device(int pid)
         //return 2의 의미는 제거를 할수없으므로 db에 해당 pid를 존치를 한다는 의미
         if (sql_query.at () + 1 == 0){  return 2;}
 
+        if (net_con.connect_raspberry ("127.0.0.1", true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
+
         if (net_con.send_Object (remove_device_json_form (QString::number(pid))) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
 
         QJsonObject _device_add_return_ = net_con.recv_Object ();
@@ -177,6 +184,7 @@ int adjust_device_controler::update_device_info(int pid)
 {
     try{
 
+        if (net_con.connect_raspberry ("127.0.0.1", true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
 
         if(net_con.send_Object ( update_device_json_form (QString::number (pid))) == false){   throw Boiler_Controler_Exception("add_device sending add_Json_protocol fail", __LINE__);}
 
@@ -254,6 +262,8 @@ int adjust_device_controler::add_auto_upgrade_code()
 
 int adjust_device_controler::set_device_tempture(int pid, int tempture)
 {
+    if (net_con.connect_raspberry ("127.0.0.1", true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
+
     if (net_con.send_Object (set_device_tempture_json_form (QString::number (pid), tempture)) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
 
     QJsonObject _device_add_return_ = net_con.recv_Object ();
@@ -265,6 +275,8 @@ int adjust_device_controler::set_device_tempture(int pid, int tempture)
 
 int adjust_device_controler::get_device_tempture(int pid)
 {
+    if (net_con.connect_raspberry ("127.0.0.1", true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
+
     if (net_con.send_Object (get_device_tempture_json_form (QString::number(pid))) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
 
     QJsonObject _device_add_return_ = net_con.recv_Object ();
