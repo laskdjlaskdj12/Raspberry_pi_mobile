@@ -41,7 +41,7 @@ public:
         lib->set_recv_timeout (3000);
         lib->set_send_timeout (3000);
 
-
+        connect(this,SIGNAL(remove_socket_process_signal(QString)), this, SLOT(remove_socket_process_slot(QString)));
     }
 
 
@@ -52,6 +52,7 @@ public:
 
 signals:
     void disconnect_signal();
+    int remove_socket_process_signal (QString pid);
 
 public slots:
 
@@ -72,17 +73,13 @@ public slots:
 
 
             lib->set_socket (temp_serv->nextPendingConnection ());
-
             rcv_doc = lib->recv_Json ();
-
+            obj     = rcv_doc.object ();
             qDebug()<<"=================================";
             qDebug()<<(QString)rcv_doc.toJson(QJsonDocument::Indented);
             qDebug()<<"=================================";
             qDebug()<<"\n\n\n\n\n";
-
             snd_obj["connect"] = true;
-
-            obj = rcv_doc.object ();
 
             if(obj["device"].isNull () == false){
 
@@ -91,7 +88,6 @@ public slots:
 
                 if(lib->send_Json (snd_obj) == false){  qDebug()<<"[Debug_Error] : "<< lib->get_socket ()->errorString ();}
                 if((rcv_doc = lib->recv_Json ()).isEmpty ()){ qDebug()<<"[Debug_Error] : "<<lib->get_socket ()->errorString ();}
-
 
                 obj = rcv_doc.object ();
 
@@ -105,9 +101,9 @@ public slots:
 
                   snd_obj = add_socket_process ();
 
-
                 } else if(obj["remove_device"].isNull () == false){
 
+                    snd_obj = remove_socket_process();
 
                 } else if (obj["update_device"].isNull ()== false){
 
@@ -126,6 +122,13 @@ public slots:
             qDebug()<<"[Error] : "<< e;
         }
 
+    }
+
+    int remove_socket_process_slot (QString pid){
+
+        qDebug()<<"[Info_Debug] : remove_socket_pid";
+
+        return 0;
     }
 
 private:
@@ -160,6 +163,14 @@ private:
 
     QJsonObject remove_socket_process (){
 
+        QJsonObject snd_obj;
+
+        if(emit remove_socket_process_signal ("PID") < 0){ qDebug()<<"[Debug_Error] : remove_socket_signal_is fail";}
+
+        snd_obj["remove_socket"] = true;
+        snd_obj["message"] = "clear";
+
+        return snd_obj;
     }
 
     QJsonObject update_socket_process (){
@@ -205,14 +216,13 @@ public:
 signals:
     void start_server();
 private slots:
-    void ip_login_selection();
-    void add_device();
-    /*void add_device_duplicate();
+   // void ip_login_selection();
+   // void add_device();
     void remove_device();
     void update_device();
     void check_device();
     void set_device_tempture();
-    void get_device_tempture();*/
+    void get_device_tempture();
 
 private:
 
@@ -274,7 +284,7 @@ Unit_test::~Unit_test()
 }
 
 
-void Unit_test::ip_login_selection()
+/*void Unit_test::ip_login_selection()
 {
     ip_login->set_ip ("127.0.0.1");
     QCOMPARE (ip_login->login_to_device (), 0);
@@ -307,24 +317,15 @@ void Unit_test::add_device()
     controler->set_device_name ("Boiler");
     controler->set_device_type ("Moter");
     QCOMPARE(controler->add_device (), 0);
-}
-
-/*void Unit_test::add_device_duplicate()
-{
-
-    controler->set_device_gpio (17);
-    controler->set_device_name ("Boiler");
-    controler->set_device_type ("Moter");
-    QCOMPARE(controler->add_device (), -1);
-}
+}*/
 
 void Unit_test::remove_device()
 {
 
     QSqlQuery db_query(db);
 
-    db_query.prepare ("SELECT `device_pid` FROM `Device_list` WHERE `device_type` = \"MOTER\"");
-
+    db_query.prepare ("SELECT `device_pid` FROM `Device_list` WHERE `device_type` = :type ");
+    db_query.bindValue (":type", "Moter");
 
     //만약 db_query가 fail일경우
     if (db_query.exec () == false){
@@ -336,8 +337,8 @@ void Unit_test::remove_device()
 
     db_query.last ();
 
-    //만약 test_row가 있다면
-    if (db_query.at () + 1 != 0){
+    //만약 test_row가 없다면
+    if (db_query.at () + 1 == 0){
         qDebug()<<"[Error_Debug] : No SEARCH PID";
         QCOMPARE(false, true);
     }
@@ -365,7 +366,7 @@ void Unit_test::set_device_tempture()
 void Unit_test::get_device_tempture()
 {
 
-}*/
+}
 
 QTEST_MAIN(Unit_test)
 #include "unit_test.moc"

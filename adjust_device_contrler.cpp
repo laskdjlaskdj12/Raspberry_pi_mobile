@@ -100,7 +100,6 @@ int adjust_device_controler::add_device()
 
         if (net_con.connect_raspberry ("127.0.0.1", true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
 
-        qDebug()<<"====================[Send_Timing]====================";
         if (net_con.send_Object (add_device_json_form ()) == false){   throw Boiler_Controler_Exception("add_device sending add_Json_protocol fail",__LINE__);}
 
         QJsonObject _device_add_return_ = net_con.recv_Object ();
@@ -157,14 +156,19 @@ int adjust_device_controler::remove_device(int pid)
         //return 2의 의미는 제거를 할수없으므로 db에 해당 pid를 존치를 한다는 의미
         if (sql_query.at () + 1 == 0){  return 2;}
 
+        //======================= raspberry에게 접속하여 해당 pid를 삭제함 =============================
+
         if (net_con.connect_raspberry ("127.0.0.1", true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
 
         if (net_con.send_Object (remove_device_json_form (QString::number(pid))) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
 
         QJsonObject _device_add_return_ = net_con.recv_Object ();
 
-        if (_device_add_return_.isEmpty ()){ return 2;}
+        //만약 리턴 쿼리의 JSON이 ["Error"]가 없었거나 리턴값이 없을경우
+        if ( _device_add_return_.isEmpty () ||
+                ! _device_add_return_["Error"].isNull () ){ return 2;}
 
+        //=============================== SQL에서 해당 디바이스를 삭제함 ==============================
         sql_query.prepare ("DELETE FROM `Device_list` WHERE `device_pid` = :pid ;");
         sql_query.bindValue (":pid", QString::number (pid));
 
