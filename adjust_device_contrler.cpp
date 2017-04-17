@@ -104,6 +104,8 @@ int adjust_device_controler::add_device()
 
         QJsonObject _device_add_return_ = net_con.recv_Object ();
 
+        net_con.disconnect_from_server ();
+
         if (_device_add_return_.isEmpty ()){ throw Boiler_Controler_Exception("Recv from server by add device protocol is fail", __LINE__);}
 
         qDebug()<<"====================[Json_Info]====================";
@@ -115,7 +117,7 @@ int adjust_device_controler::add_device()
 
         //서버에서 리턴되는 pid와 hash를 db에 업데이트
         db_query.prepare ("UPDATE `Device_list` SET `device_pid`= (:pid), `device_hash`= (:hash) WHERE `device_type`= (:type) AND `device_name`= (:name) AND `device_gpio`= (:gpio) AND `device_pid` = 0");
-        db_query.bindValue (":pid", _device_add_return_["pid"].toString ());
+        db_query.bindValue (":pid", QString::number(_device_add_return_["pid"].toInt ()));
         db_query.bindValue (":hash", _device_add_return_["hash"].toString ());
         db_query.bindValue (":type", temp_device_type_);
         db_query.bindValue (":name", temp_name_);
@@ -164,6 +166,8 @@ int adjust_device_controler::remove_device(int pid)
 
         QJsonObject _device_add_return_ = net_con.recv_Object ();
 
+        net_con.disconnect_from_server ();
+
         //만약 리턴 쿼리의 JSON이 ["Error"]가 없었거나 리턴값이 없을경우
         if ( _device_add_return_.isEmpty () ||
                 ! _device_add_return_["Error"].isNull () ){ return 2;}
@@ -193,6 +197,8 @@ int adjust_device_controler::update_device_info(int pid)
         if(net_con.send_Object ( update_device_json_form (QString::number (pid))) == false){   throw Boiler_Controler_Exception("add_device sending add_Json_protocol fail", __LINE__);}
 
         QJsonObject _device_add_return_ = net_con.recv_Object ();
+
+        net_con.disconnect_from_server ();
 
         if (_device_add_return_.isEmpty ()){ throw Boiler_Controler_Exception("Recv from server by add device protocol is fail", __LINE__);}
 
@@ -272,6 +278,8 @@ int adjust_device_controler::set_device_tempture(int pid, int tempture)
 
     QJsonObject _device_add_return_ = net_con.recv_Object ();
 
+    net_con.disconnect_from_server ();
+
     if (_device_add_return_.isEmpty ()){ return 2;}
 
     return _device_add_return_["tempture"].toInt ();
@@ -284,6 +292,8 @@ int adjust_device_controler::get_device_tempture(int pid)
     if (net_con.send_Object (get_device_tempture_json_form (QString::number(pid))) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
 
     QJsonObject _device_add_return_ = net_con.recv_Object ();
+
+    net_con.disconnect_from_server ();
 
     if (_device_add_return_.isEmpty ()){ return 2;}
 

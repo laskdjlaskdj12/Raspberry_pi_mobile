@@ -37,17 +37,19 @@ public:
 
         pid_arr = new int[PID_ARR_SIZ];
 
+        connect(this,SIGNAL(remove_socket_process_signal(QString)), this, SLOT(remove_socket_process_slot(QString)));
+
         lib->set_connect_timeout (3000);
         lib->set_recv_timeout (3000);
         lib->set_send_timeout (3000);
-
-        connect(this,SIGNAL(remove_socket_process_signal(QString)), this, SLOT(remove_socket_process_slot(QString)));
     }
 
 
     ~Unit_test_Server(){
         temp_serv->deleteLater ();
         lib->deleteLater ();
+
+
     }
 
 signals:
@@ -61,6 +63,7 @@ public slots:
         if (temp_serv->listen (QHostAddress::Any, 43100) == false){
             qDebug()<<"[Error_Unit_test_Server] : This is error of server listening : "<<__LINE__;
         }
+
     }
 
     void start_server_recv(){
@@ -70,7 +73,6 @@ public slots:
             QJsonDocument rcv_doc;
             QJsonObject obj;
             QJsonObject snd_obj;
-
 
             lib->set_socket (temp_serv->nextPendingConnection ());
             rcv_doc = lib->recv_Json ();
@@ -99,7 +101,7 @@ public slots:
 
                 if (obj["add_device"].toBool () == true){
 
-                  snd_obj = add_socket_process ();
+                    snd_obj = add_socket_process ();
 
                 } else if(obj["remove_device"].isNull () == false){
 
@@ -107,9 +109,19 @@ public slots:
 
                 } else if (obj["update_device"].isNull ()== false){
 
-                } else if (obj["tempture"].isNull () == false){
+                    snd_obj = update_socket_process ();
 
-                    snd_obj["tempture"] = obj["tempture"].toInt ();
+                } else if (obj["adjust"].isNull () == false){
+
+                    if(obj["adjust"].toString () == "set"){
+
+                        snd_obj["tempture"] = obj["tempture"].toInt ();
+                    }
+                    else{
+
+                        snd_obj["tempture"] = 30;
+                    }
+
                 }
             }
 
@@ -175,7 +187,12 @@ private:
 
     QJsonObject update_socket_process (){
 
+        QJsonObject snd_obj;
 
+        snd_obj["update_device"] = true;
+        snd_obj["message"] = "clear";
+
+        return snd_obj;
     }
 
 private:
@@ -216,8 +233,8 @@ public:
 signals:
     void start_server();
 private slots:
-   // void ip_login_selection();
-   // void add_device();
+    void ip_login_selection();
+    //void add_device();
     void remove_device();
     void update_device();
     void check_device();
@@ -284,13 +301,13 @@ Unit_test::~Unit_test()
 }
 
 
-/*void Unit_test::ip_login_selection()
+void Unit_test::ip_login_selection()
 {
     ip_login->set_ip ("127.0.0.1");
     QCOMPARE (ip_login->login_to_device (), 0);
 }
 
-void Unit_test::add_device()
+/*void Unit_test::add_device()
 {
     QSqlQuery db_query(db);
 
@@ -317,6 +334,7 @@ void Unit_test::add_device()
     controler->set_device_name ("Boiler");
     controler->set_device_type ("Moter");
     QCOMPARE(controler->add_device (), 0);
+    QCOMPARE(controler->check_device_state (), 0);
 }*/
 
 void Unit_test::remove_device()
@@ -350,22 +368,102 @@ void Unit_test::remove_device()
 
 void Unit_test::update_device()
 {
+    QSqlQuery db_query(db);
+
+    db_query.prepare ("SELECT `device_pid` FROM `Device_list` WHERE `device_type` = :type ");
+    db_query.bindValue (":type", "Moter");
+
+    //만약 db_query가 fail일경우
+    if (db_query.exec () == false){
+
+        QCOMPARE(false,true);
+        qDebug()<<"[Error_Debug] : db_qeury is error : "<<db_query.lastError ();
+        return;
+    }
+
+    db_query.last ();
+
+    //만약 test_row가 없다면
+    if (db_query.at () + 1 == 0){
+        qDebug()<<"[Error_Debug] : No SEARCH PID";
+        QCOMPARE(false, true);
+    }
+
+    db_query.first ();
+
+    QString pid = db_query.value (0).toString ();
+
+    controler->set_device_name("This_IS_Moter");
+
+    QCOMPARE(controler->update_device_info (pid.toInt ()), 0);
 
 }
 
 void Unit_test::check_device()
 {
-
+    QCOMPARE(controler->check_device_state (), 0);
 }
 
 void Unit_test::set_device_tempture()
 {
 
+    QSqlQuery db_query(db);
+
+    db_query.prepare ("SELECT `device_pid` FROM `Device_list` WHERE `device_type` = :type ");
+    db_query.bindValue (":type", "Moter");
+
+    //만약 db_query가 fail일경우
+    if (db_query.exec () == false){
+
+        QCOMPARE(false,true);
+        qDebug()<<"[Error_Debug] : db_qeury is error : "<<db_query.lastError ();
+        return;
+    }
+
+    db_query.last ();
+
+    //만약 test_row가 없다면
+    if (db_query.at () + 1 == 0){
+        qDebug()<<"[Error_Debug] : No SEARCH PID";
+        QCOMPARE(false, true);
+    }
+
+    db_query.first ();
+
+    QString pid = db_query.value (0).toString ();
+
+    QCOMPARE(controler->set_device_tempture (pid.toInt (), 30), 30);
 }
 
 void Unit_test::get_device_tempture()
 {
 
+    QSqlQuery db_query(db);
+
+    db_query.prepare ("SELECT `device_pid` FROM `Device_list` WHERE `device_type` = :type ");
+    db_query.bindValue (":type", "Moter");
+
+    //만약 db_query가 fail일경우
+    if (db_query.exec () == false){
+
+        QCOMPARE(false,true);
+        qDebug()<<"[Error_Debug] : db_qeury is error : "<<db_query.lastError ();
+        return;
+    }
+
+    db_query.last ();
+
+    //만약 test_row가 없다면
+    if (db_query.at () + 1 == 0){
+        qDebug()<<"[Error_Debug] : No SEARCH PID";
+        QCOMPARE(false, true);
+    }
+
+    db_query.first ();
+
+    QString pid = db_query.value (0).toString ();
+
+    QCOMPARE(controler->get_device_tempture (pid.toInt ()), 30);
 }
 
 QTEST_MAIN(Unit_test)
