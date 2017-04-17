@@ -152,14 +152,17 @@ private:
         bool rand_pid_valid = true;
 
         do{
-
-            int temp_rand_pid = qrand ();
+            qsrand(QTime::currentTime().msec());
+            int temp_rand_pid = qrand();
 
             for(int i = 0; i < PID_ARR_SIZ; i++){
 
                 if ( pid_arr[i] != true){
 
                     rand_pid = temp_rand_pid;
+                    pid_arr[i] = rand_pid;
+                    qDebug()<<"[Info] : rand_pid = "<<rand_pid;
+
                     rand_pid_valid = false;
                     break;
                 }
@@ -234,7 +237,7 @@ signals:
     void start_server();
 private slots:
     void ip_login_selection();
-    //void add_device();
+    void add_device();
     void remove_device();
     void update_device();
     void check_device();
@@ -289,6 +292,8 @@ Unit_test::Unit_test(QObject *parent)
         qDebug()<<"[Error_Debug] : "<<db.lastError ().text ();
     }
 
+    //db.exec ("DELETE FROM `device_list` WHERE *");
+
 
 }
 
@@ -307,7 +312,7 @@ void Unit_test::ip_login_selection()
     QCOMPARE (ip_login->login_to_device (), 0);
 }
 
-/*void Unit_test::add_device()
+void Unit_test::add_device()
 {
     QSqlQuery db_query(db);
 
@@ -335,7 +340,7 @@ void Unit_test::ip_login_selection()
     controler->set_device_type ("Moter");
     QCOMPARE(controler->add_device (), 0);
     QCOMPARE(controler->check_device_state (), 0);
-}*/
+}
 
 void Unit_test::remove_device()
 {
