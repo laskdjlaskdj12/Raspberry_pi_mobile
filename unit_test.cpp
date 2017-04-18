@@ -1,4 +1,4 @@
-#include <QTest>
+/*#include <QTest>
 
 #include <QObject>
 
@@ -472,4 +472,4 @@ void Unit_test::get_device_tempture()
 }
 
 QTEST_MAIN(Unit_test)
-#include "unit_test.moc"
+#include "unit_test.moc"*/

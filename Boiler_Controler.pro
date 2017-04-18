@@ -43,3 +43,5 @@ HEADERS += \
     ip_login_section.h \
     boiler_controler_exception.h \
     adjust_device_contrler.h
+
+STATECHARTS +=
