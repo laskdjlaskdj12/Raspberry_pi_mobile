@@ -18,18 +18,21 @@ Rectangle_Design_Form {
     function add_device_button_click(){
         main_indicator_panel.state = "Add_Device_state"
     }
+
     function add_device_button_click_done(){
         main_indicator_panel.state = "Main_state"
     }
 
     //해당 함수는 c++에서 디바이스를 추가할때 사용함
-    function add_device(Device_name_String, Device_current_tempture, Device_setting_tempture){
+    function add_device(Device_name_String, Device_current_tempture, Device_setting_tempture, Device_pid){
         dial_list.append({
-                             panel_name: Device_name_String,
+                             panel_name:             Device_name_String,
                              panel_current_tempture: Device_current_tempture,
-                             panel_setting_tempture: Device_setting_tempture
+                             panel_setting_tempture: Device_setting_tempture,
+                             panel_pid             : Device_pid
                          })
     }
+
 
     //메인컨트롤러는 리스트 형태 그리고 리스트를 누르면 해당 위치별로 등록된 컨트롤러가 나타나서 조절을 가능하게함
     Item{
@@ -87,7 +90,9 @@ Rectangle_Design_Form {
             y: 178
             width: 700
             height: 700
-            delegate: Dial_List_Delicate{}
+            delegate: Dial_List_Delicate{
+
+            }
             model: dial_list
 
 

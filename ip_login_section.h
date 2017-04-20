@@ -25,8 +25,9 @@ public:
 
 private:
     QJsonObject send_connect_Json_Synctes();
-public slots:
 
+public slots:
+    void check_ip_connect(QString ip);
     void timeout_to_device();
 
 signals:
@@ -36,6 +37,8 @@ signals:
 private:
     QString ip_;
     Qt_Json_Socket_Lib* lib;
+
+    bool is_connect;
 
 
 };

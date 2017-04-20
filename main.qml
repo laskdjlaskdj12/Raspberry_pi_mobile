@@ -11,6 +11,7 @@ ApplicationWindow {
 
     Main_Window{
         id: main_window
+        objectName: main_window_obj
         width: 720
         height: 960
     }

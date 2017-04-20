@@ -9,7 +9,8 @@ SOURCES += main.cpp \
     boiler_controler_exception.cpp \
     adjust_device_contrler.cpp \
     qt_json_socket_lib.cpp \
-    unit_test.cpp
+    unit_test.cpp \
+    main_process.cpp
 
 RESOURCES += qml.qrc
 
@@ -42,6 +43,7 @@ HEADERS += \
     tcp_connection.h \
     ip_login_section.h \
     boiler_controler_exception.h \
-    adjust_device_contrler.h
+    adjust_device_contrler.h \
+    main_process.h
 
 STATECHARTS +=

@@ -13,7 +13,7 @@ Rectangle_Design_Form {
     property alias  back_button: back_to_menu
 
     //=================== 시그널 영역 ==========================
-    signal add_raspberry_Devcie(string d_name, int gpio, string d_type)
+    signal add_raspberry_Device(string d_name, int gpio, string d_type)
 
     RowLayout {
         x: 142

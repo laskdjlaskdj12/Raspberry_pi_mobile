@@ -35,6 +35,11 @@ int Ip_Login_Section::login_to_device()
 
         if (_doc_.isNull () || _doc_.isEmpty ()){    throw Boiler_Controler_Exception(QString("Recv_Json document fail"), __LINE__);}
 
+        else if(_doc_.object ()["connect"].toBool () == true){
+
+            return 1;
+        }
+
         return 0;
 
     }catch(Boiler_Controler_Exception& e){
@@ -53,6 +58,21 @@ QJsonObject Ip_Login_Section::send_connect_Json_Synctes()
     _obj_["connect"] = true;
 
     return _obj_;
+}
+
+void Ip_Login_Section::check_ip_connect(QString ip)
+{
+    this->set_ip (ip);
+    if (this->login_to_device () == 1){
+
+        is_connect = true;
+    }
+
+    else{
+
+        is_connect = false;
+    }
+
 
 }
 
