@@ -24,13 +24,40 @@ Rectangle_Design_Form {
     }
 
     //해당 함수는 c++에서 디바이스를 추가할때 사용함
+<<<<<<< Updated upstream
     function add_device(Device_name_String, Device_current_tempture, Device_setting_tempture, Device_pid){
+=======
+    function add_device(Panel_index, Device_name_String, Device_current_tempture, Device_setting_tempture, Device_pid){
+
+>>>>>>> Stashed changes
         dial_list.append({
                              panel_name:             Device_name_String,
                              panel_current_tempture: Device_current_tempture,
                              panel_setting_tempture: Device_setting_tempture,
                              panel_pid             : Device_pid
                          })
+<<<<<<< Updated upstream
+=======
+
+        //현재 패널창안에 있는 디바이스패널들의 인덱스를 전부 재설정
+        var penl_size = dial_list.count
+        for(var i = 0; i < penl_size; i++){
+
+            dial_list.get(i).panel_index = i
+        }
+    }
+
+    function remove_device_panel (Panel_index){
+
+        dial_list.remove(Panel_index)
+
+        //현재 패널창안에 있는 디바이스패널들의 인덱스를 전부 재설정
+        var penl_size = dial_list.count
+        for(var i = 0; i < penl_size; i++){
+
+            dial_list.get(i).panel_index = i
+        }
+>>>>>>> Stashed changes
     }
 
 
@@ -92,7 +119,34 @@ Rectangle_Design_Form {
             height: 700
             delegate: Dial_List_Delicate{
 
+<<<<<<< Updated upstream
+=======
+
+                Rectangle {
+                    id: remove_panel
+                    x: 583
+                    y: 60
+                    width: 109
+                    height: 27
+                    color: "#ff8000"
+
+                    MouseArea{
+
+                        id: remove_panel_button
+                        width: parent.width
+                        height: parent.height
+                        onClicked: {
+
+                            console.debug(qsTr("Remove index : "), panel_current_index)
+                            remove_device_panel( panel_current_index);
+                        }
+                    }
+                }
+
+
+>>>>>>> Stashed changes
             }
+
             model: dial_list
 
 
