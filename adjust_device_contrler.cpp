@@ -57,6 +57,8 @@ adjust_device_controler::adjust_device_controler(QObject *parent) : device_contr
 
 adjust_device_controler::~adjust_device_controler(){}
 
+void adjust_device_controler::set_ip(QString ip){   ip_ = ip;}
+
 void adjust_device_controler::set_device_name(QString name){   temp_name_ = name;}
 
 void adjust_device_controler::set_device_type(QString type){    temp_device_type_ = type;}
@@ -98,7 +100,7 @@ int adjust_device_controler::add_device()
         qDebug()<<"====================[Json_Info]====================";
         qDebug()<<QString (QJsonDocument(add_device_json_form ()).toJson ());
 
-        if (net_con.connect_raspberry ("127.0.0.1", true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
+        if (net_con.connect_raspberry (ip_, true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
 
         if (net_con.send_Object (add_device_json_form ()) == false){   throw Boiler_Controler_Exception("add_device sending add_Json_protocol fail",__LINE__);}
 
@@ -160,7 +162,7 @@ int adjust_device_controler::remove_device(int pid)
 
         //======================= raspberry에게 접속하여 해당 pid를 삭제함 =============================
 
-        if (net_con.connect_raspberry ("127.0.0.1", true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
+        if (net_con.connect_raspberry (ip_, true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
 
         if (net_con.send_Object (remove_device_json_form (QString::number(pid))) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
 
@@ -170,7 +172,7 @@ int adjust_device_controler::remove_device(int pid)
 
         //만약 리턴 쿼리의 JSON이 ["Error"]가 없었거나 리턴값이 없을경우
         if ( _device_add_return_.isEmpty () ||
-                ! _device_add_return_["Error"].isNull () ){ return 2;}
+             ! _device_add_return_["Error"].isNull () ){ return 2;}
 
         //=============================== SQL에서 해당 디바이스를 삭제함 ==============================
         sql_query.prepare ("DELETE FROM `Device_list` WHERE `device_pid` = :pid ;");
@@ -192,7 +194,7 @@ int adjust_device_controler::update_device_info(int pid)
 {
     try{
 
-        if (net_con.connect_raspberry ("127.0.0.1", true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
+        if (net_con.connect_raspberry (ip_, true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
 
         if(net_con.send_Object ( update_device_json_form (QString::number (pid))) == false){   throw Boiler_Controler_Exception("add_device sending add_Json_protocol fail", __LINE__);}
 
@@ -270,34 +272,98 @@ int adjust_device_controler::add_auto_upgrade_code()
     return 0;
 }
 
+QJsonObject adjust_device_controler::load_device_list()
+{
+    /*
+     * 1. 서버연결후 디바이스 목록을 요청
+     * 2. 서버에서 디바이스 목록을 쿼리로 요청
+     * 3. 서버에서 리턴값을 jsonObject로 변경후 리턴
+     * 4. 서버에서 클라이언트로 전송
+     * 5. 리턴
+     *
+     * */
+    try{
+
+        if (net_con.connect_raspberry (ip_, true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
+
+        if (net_con.send_Object (load_device_list_json_form ()) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
+
+        QJsonObject _rcv_obj_ = net_con.recv_Object ();
+
+        net_con.disconnect_from_server ();
+
+        if(_rcv_obj_["Message"].isNull () == false){ throw _rcv_obj_["Message"].toString ();}
+
+        return _rcv_obj_;
+
+    }catch (QString& e){
+        qDebug()<<"[Error] : " << e;
+
+        QJsonObject res_obj;
+
+        res_obj["Error"] = true;
+        return res_obj;
+    }
+
+
+
+}
+
 int adjust_device_controler::set_device_tempture(int pid, int tempture)
 {
-    if (net_con.connect_raspberry ("127.0.0.1", true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
+    /*
+     * 1. 서버연결
+     * 2. JsonOjbect로 프로토콜을 전송
+     * 3. 서버에서 설정후 tempture를 리턴값을 받음
+     * 4. 서버를 disconnect함
+     * 5. tempture값을 리턴
+     *
+     * */
 
-    if (net_con.send_Object (set_device_tempture_json_form (QString::number (pid), tempture)) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
+    try{
 
-    QJsonObject _device_add_return_ = net_con.recv_Object ();
+        if (net_con.connect_raspberry (ip_, true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
 
-    net_con.disconnect_from_server ();
+        if (net_con.send_Object (set_device_tempture_json_form (QString::number (pid), tempture)) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
 
-    if (_device_add_return_.isEmpty ()){ return 2;}
+        QJsonObject _rcv_obj_ = net_con.recv_Object ();
 
-    return _device_add_return_["tempture"].toInt ();
+        net_con.disconnect_from_server ();
+
+        if (_rcv_obj_.isEmpty ()){ return 2;}
+
+        if(_rcv_obj_["Message"].isNull () == false){ throw _rcv_obj_["Message"].toString ();}
+
+        return _rcv_obj_["tempture"].toInt ();
+
+    }catch (QString& e){
+        qDebug()<<"[Error] : " << e;
+        return -1;
+    }
 }
 
 int adjust_device_controler::get_device_tempture(int pid)
 {
-    if (net_con.connect_raspberry ("127.0.0.1", true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
+    try{
 
-    if (net_con.send_Object (get_device_tempture_json_form (QString::number(pid))) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
+        if (net_con.connect_raspberry (ip_, true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
 
-    QJsonObject _device_add_return_ = net_con.recv_Object ();
+        if (net_con.send_Object (get_device_tempture_json_form (QString::number(pid))) == false){ throw Boiler_Controler_Exception("Recv from server by remove device protocol is fail", __LINE__);}
 
-    net_con.disconnect_from_server ();
+        QJsonObject _rcv_obj_ = net_con.recv_Object ();
 
-    if (_device_add_return_.isEmpty ()){ return 2;}
+        net_con.disconnect_from_server ();
 
-    return _device_add_return_["tempture"].toInt ();
+        if (_rcv_obj_.isEmpty ()){ return 2;}
+
+        if(_rcv_obj_["Message"].isNull () == false){ throw _rcv_obj_["Message"].toString ();}
+
+        return _rcv_obj_["tempture"].toInt ();
+
+    }catch (QString& e){
+        qDebug()<<"[Error] : " << e;
+        return -1;
+    }
 }
 
 QJsonObject adjust_device_controler::add_device_json_form()
@@ -355,8 +421,19 @@ QJsonObject adjust_device_controler::get_device_tempture_json_form(QString d_pid
 
     obj["connect"] = true;
     obj["d_pid"] = d_pid;
+    obj["tempture"] = 0;
     obj["adjust"] = "get";
 
     return obj;
 
+}
+
+QJsonObject adjust_device_controler::load_device_list_json_form()
+{
+    QJsonObject obj;
+
+    obj["connect"] = true;
+    obj["load_device_info"] = true;
+
+    return obj;
 }

@@ -6,6 +6,8 @@
 #include <QQmlApplicationEngine>
 #include <QVariant>
 #include <QDebug>
+#include <QList>
+
 
 #include "ip_login_section.h"
 #include "adjust_device_contrler.h"
@@ -27,19 +29,25 @@ public:
 
     QObject* get_root_qml_object();
 
-
 public slots:
 
     //로그인 패널에서 ip로그인 버튼이 emit 시그널을 connect함
-    void check_ip_connect(QString ip);
+    void ip_connect_to_raspberry(QString ip);
 
     //디바이스를 추가시 slot
     void add_raspberry_device(QString name, int gpio, QString d_type);
+
+    //디바이스 제거 slot
+    void remove_raspberry_device(QString pid);
 
     //디바이스 제거시 slot
     void set_device_tempture (int value, QString pid);
 
 private:
+    //디바이스 리스트를 리턴할
+private:
+
+    //========================== qml Object Area ==========================
 
     //qml루트 오브젝트를 가지고옴
     QObject* root_obj;
@@ -61,6 +69,11 @@ private:
 
     //디바이스 추가 오브젝트
     QObject* add_device_obj;
+
+    //디바이스 리스트
+    QList<QObject*> dev_list;
+
+    //========================== 클라이언트 제어 Area ==========================
 
     //ip 로그인 세션 오브젝트
     Ip_Login_Section* ip_login;

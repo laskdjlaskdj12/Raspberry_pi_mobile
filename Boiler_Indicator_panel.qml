@@ -15,29 +15,31 @@ Rectangle_Design_Form {
     property alias sidemenu_to_menu: menu_back_button
     property alias side_menu: side_menu
 
-    function add_device_button_click(){
+    //device_add_page로 가기 디바이스 추가 버튼을 눌렀을시
+    function add_device_button_click (){
         main_indicator_panel.state = "Add_Device_state"
     }
 
-    function add_device_button_click_done(){
+    //device_add_page에서 뒤로가기
+    function add_device_button_click_done (){
         main_indicator_panel.state = "Main_state"
     }
 
+    //다비이스 에 디바이스에서 설정이 완료된 tempture값을 설정함
+    function change_device_tempture (index, tempture){
+        dial_list.get(index).panel_current_tempture = tempture;
+    }
+
     //해당 함수는 c++에서 디바이스를 추가할때 사용함
-<<<<<<< Updated upstream
-    function add_device(Device_name_String, Device_current_tempture, Device_setting_tempture, Device_pid){
-=======
     function add_device(Panel_index, Device_name_String, Device_current_tempture, Device_setting_tempture, Device_pid){
 
->>>>>>> Stashed changes
         dial_list.append({
                              panel_name:             Device_name_String,
                              panel_current_tempture: Device_current_tempture,
                              panel_setting_tempture: Device_setting_tempture,
-                             panel_pid             : Device_pid
+                             panel_pid             : Device_pid,
+                             panel_index           : Panel_index
                          })
-<<<<<<< Updated upstream
-=======
 
         //현재 패널창안에 있는 디바이스패널들의 인덱스를 전부 재설정
         var penl_size = dial_list.count
@@ -47,6 +49,7 @@ Rectangle_Design_Form {
         }
     }
 
+    //디바이스 제거시 해당 루틴을 실행함
     function remove_device_panel (Panel_index){
 
         dial_list.remove(Panel_index)
@@ -57,9 +60,10 @@ Rectangle_Design_Form {
 
             dial_list.get(i).panel_index = i
         }
->>>>>>> Stashed changes
     }
 
+    //디바이스 제거시 pid를 메인함수로 전송해서 제거를함
+    signal remove_device_pid(string device_pid)
 
     //메인컨트롤러는 리스트 형태 그리고 리스트를 누르면 해당 위치별로 등록된 컨트롤러가 나타나서 조절을 가능하게함
     Item{
@@ -111,6 +115,7 @@ Rectangle_Design_Form {
 
         }
 
+        //디바이스 리스트 뷰
         ListView {
             id: listView
             x: 8
@@ -119,9 +124,8 @@ Rectangle_Design_Form {
             height: 700
             delegate: Dial_List_Delicate{
 
-<<<<<<< Updated upstream
-=======
 
+                //디바이스 패널을 remove 할 버튼
                 Rectangle {
                     id: remove_panel
                     x: 583
@@ -138,13 +142,13 @@ Rectangle_Design_Form {
                         onClicked: {
 
                             console.debug(qsTr("Remove index : "), panel_current_index)
-                            remove_device_panel( panel_current_index);
+                            remove_device_panel( panel_current_index )
+                            remove_device_pid( device_pid )
                         }
                     }
                 }
 
 
->>>>>>> Stashed changes
             }
 
             model: dial_list
@@ -162,6 +166,7 @@ Rectangle_Design_Form {
 
         //사이드 메뉴
         //사이드 메뉴로는 컴포넌트 자동 업데이트나 아니면 로그인 상태 등등을 표시함
+
         Rectangle{
             id: side_menu
             x: -246
@@ -192,6 +197,7 @@ Rectangle_Design_Form {
 
         }
 
+        //디바이스 추가 제거
         RowLayout {
             x: 273
             y: 124
@@ -201,8 +207,9 @@ Rectangle_Design_Form {
                 text: qsTr("Add")
                 onClicked: {
 
-                    main_indicator_panel.state = "Add_Device_state"
+                   main_indicator_panel.state = "Add_Device_state"
 
+                   //add_device(dial_list.count, dial_list.count, 0, 0, "12321")
 
                 }
 
@@ -219,16 +226,21 @@ Rectangle_Design_Form {
         }
     }
 
+    //리스트 모델
     Dial_List_Model{
         id: dial_list
 
     }
 
+    //디바이스 추가시 페이지
     Device_Add_Page {
         id: device_Add_Page
         x: 720
         y: 0
     }
+
+    //디아비스 제거시 페이지
+
 
     ///This is state and transistion area
 

@@ -26,7 +26,7 @@ Item {
 
     Login_Window{
         id: login_window
-        objectName: login_window_obj
+        objectName: "login_window_obj"
         x: 0
         y: 0
         width: 720
@@ -36,22 +36,22 @@ Item {
     }
     Loding_Screen{
         id: loading_screen
-        objectName: login_screen_obj
+        objectName: "login_screen_obj"
     }
 
     Account_menu_panel{
         id: account_penl
-        objectName: account_penl_obj
+        objectName: "account_penl_obj"
     }
 
     Boiler_Indicator_panel{
         id: main_indicator_panel
         visible: true
-        objectName: main_indicator_panel_obj
+        objectName: "main_indicator_panel_obj"
     }
     Device_Add_Page{
         id: device_add_panel
-        objectName: device_add_panel_obj
+        objectName: "device_add_panel_obj"
     }
 
     states: [

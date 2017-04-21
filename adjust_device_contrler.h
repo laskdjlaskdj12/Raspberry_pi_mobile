@@ -19,6 +19,7 @@ public:
     device_control();
     virtual ~device_control();
 
+    virtual void set_ip(QString ip)                              = 0;
     virtual void set_device_name(QString name)                   = 0;
     virtual void set_device_type(QString type)                   = 0;
     virtual void set_device_gpio(int gpio)                       = 0;
@@ -35,6 +36,7 @@ public:
     virtual int update_device_info(int pid)                      = 0;
     virtual int check_device_state()                             = 0;
     virtual int add_auto_upgrade_code()                          = 0;
+    virtual QJsonObject load_device_list ()                      = 0;
 
 };
 
@@ -45,6 +47,7 @@ public:
     explicit adjust_device_controler(QObject *parent = 0)         ;
     virtual ~adjust_device_controler()                            ;
 
+    virtual void set_ip(QString ip)                              ;
     virtual void set_device_name(QString name)                   ;
     virtual void set_device_type(QString type)                   ;
     virtual void set_device_gpio(int gpio)                       ;
@@ -61,6 +64,9 @@ public:
     virtual int update_device_info(int pid)                      ;
     virtual int check_device_state()                             ;
     virtual int add_auto_upgrade_code()                          ;
+    virtual QJsonObject load_device_list ()                      ;
+
+
 
     int set_device_tempture(int pid, int tempture)              ;
     int get_device_tempture(int pid)                            ;
@@ -70,18 +76,19 @@ signals:
 public slots:
 
 private:
-    QJsonObject add_device_json_form();
-    QJsonObject remove_device_json_form(QString pid);
-    QJsonObject update_device_json_form(QString pid);
-    QJsonObject set_device_tempture_json_form(QString pid, int tempture);
-    QJsonObject get_device_tempture_json_form(QString pid);
-
+    QJsonObject add_device_json_form ();
+    QJsonObject remove_device_json_form (QString pid);
+    QJsonObject update_device_json_form (QString pid);
+    QJsonObject set_device_tempture_json_form (QString pid, int tempture);
+    QJsonObject get_device_tempture_json_form (QString pid);
+    QJsonObject load_device_list_json_form ();
 
 private:
     QSqlDatabase db_;
 
     tcp_connection net_con;
 
+    QString ip_;
     QString temp_name_;
     QString temp_device_type_;
     int temp_device_gpio_;

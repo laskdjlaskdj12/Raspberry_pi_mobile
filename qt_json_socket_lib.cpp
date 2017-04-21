@@ -21,6 +21,8 @@ bool Qt_Json_Socket_Lib::make_QTcpSocket()
 
     //disconnect 시그널 연결
     connect(sock__,SIGNAL(disconnected()), this, SLOT(disconnect_slot()));
+
+    return true;
 }
 
 void Qt_Json_Socket_Lib::set_socket(QTcpSocket *sock)

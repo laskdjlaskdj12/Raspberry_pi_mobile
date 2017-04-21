@@ -7,7 +7,7 @@ import QtQuick.Controls.Material 2.1
 Rectangle_Design_Form {
 
     property alias login_botton: login_botton
-    property alias  error_eidt: error_edit
+    property alias  error_edit: error_edit
     property string ip_editor:   login_ip_editor.text
 
     signal req_acc_dev(string ip)
@@ -90,6 +90,8 @@ Rectangle_Design_Form {
 
         Label {
             id: error_edit
+            objectName: "error_edit"
+
             x: 115
             y: 608
             width: 460

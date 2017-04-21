@@ -43,7 +43,8 @@ int Ip_Login_Section::login_to_device()
         return 0;
 
     }catch(Boiler_Controler_Exception& e){
-        qDebug()<<"[Error] : "<<e.get_error_string ();
+
+        e.get_error ();
         return -1;
     }
 }
