@@ -9,6 +9,7 @@ Rectangle_Design_Form {
     property string add_device_name: device_name_field.text
     property int    add_device_gpio: gpio_field.value
     property string add_device_type: device_type_field.displayText
+    property string device_states_label: states_label.text
     property alias  add_button: add_device_button
     property alias  back_button: back_to_menu
 
@@ -109,6 +110,17 @@ Rectangle_Design_Form {
             width: parent.width
             height: parent.height
         }
+    }
+
+    Label {
+        id: states_label
+        x: 142
+        y: 589
+        width: 476
+        height: 46
+        text: qsTr("")
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
     }
 
 }

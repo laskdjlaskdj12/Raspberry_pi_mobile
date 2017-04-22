@@ -33,7 +33,8 @@ Rectangle_Design_Form {
             checkable: false
             highlighted: true
             onClicked: {
-                console.debug(qsTr("This is not a "))
+                console.debug(qsTr("=========== login device ==========="))
+                console.debug(qsTr("ip:"), login_ip_editor.text)
                 req_acc_dev(login_ip_editor.text)
             }
 

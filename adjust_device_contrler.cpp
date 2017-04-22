@@ -4,7 +4,10 @@ device_control::device_control(){}
 
 device_control::~device_control(){}
 
-adjust_device_controler::adjust_device_controler(QObject *parent) : device_control(), temp_device_gpio_(0)
+adjust_device_controler::adjust_device_controler(QObject *parent) : device_control(), temp_device_gpio_(0),\
+    temp_device_type_(""),\
+    ip_(""),\
+    temp_name_("")
 {
     try{
 
@@ -67,6 +70,8 @@ void adjust_device_controler::set_device_gpio(int gpio){    temp_device_gpio_ = 
 
 void adjust_device_controler::set_device_owner_phone_number(QString number){    owner_phone_number_ = number;}
 
+QString adjust_device_controler::get_ip(){  return ip_;}
+
 QString adjust_device_controler::get_device_name(){ return temp_name_;}
 
 QString adjust_device_controler::get_device_type(){ return temp_device_type_;}
@@ -128,7 +133,7 @@ int adjust_device_controler::add_device()
         if (db_query.exec () == false){   throw Boiler_Controler_Exception(db_query.lastError ().text (), __LINE__);}
 
 
-        return 0;
+        return _device_add_return_["pid"].toInt ();
 
     }catch(Boiler_Controler_Exception& e){
 

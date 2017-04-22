@@ -6,7 +6,7 @@ import QtQuick.Controls.Material 2.1
 
 Item {
 
-    //만약 로그인이 실패했을경우
+    //==================== JAVASCRIPT ====================
     function login_fail(login_fail_reason){
         main_window.state = "Login_Page"
         login_window.error_eidt.text = login_fail_reason

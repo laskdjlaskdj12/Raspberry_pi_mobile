@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.0
 
 
 //Dial 리스트 모델에서는 panel_의 naming convention이 들어감
-//In Dial_List Model have naming convention to panel_
+//In Dial_List Model have naming convention to panel_.
 Rectangle{
     property alias tempture_dial: tempture_dial
     property alias setting_tempture: setting_tempture

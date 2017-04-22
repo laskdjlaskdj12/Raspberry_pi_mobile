@@ -7,7 +7,12 @@
 #include <QVariant>
 #include <QDebug>
 #include <QList>
-
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonValue>
+#include <QSqlDatabase>
+#include <QSqlQuery>
 
 #include "ip_login_section.h"
 #include "adjust_device_contrler.h"
@@ -44,7 +49,19 @@ public slots:
     void set_device_tempture (int value, QString pid);
 
 private:
-    //디바이스 리스트를 리턴할
+    /*//디바이스를 추가함
+    int add_device(int Panel_index,
+                   QString Device_name,
+                   int Device_current_tempture,
+                   int Device_setting_tempture,
+                   QString Device_pid);
+
+    //디바이스를 제거함
+    int remove_device(int Panel_index);
+
+    //디바이스를 수정함
+    int */
+
 private:
 
     //========================== qml Object Area ==========================
@@ -80,6 +97,10 @@ private:
 
     //디바이스 컨트롤러 세션
     adjust_device_controler* controler;
+
+    //디바이스 저장할 db
+    QSqlDatabase db_;
+
 
 };
 

@@ -25,6 +25,7 @@ public:
     virtual void set_device_gpio(int gpio)                       = 0;
     virtual void set_device_owner_phone_number(QString number)   = 0;
 
+    virtual QString get_ip()                                     = 0;
     virtual QString get_device_name()                            = 0;
     virtual QString get_device_type()                            = 0;
     virtual int     get_device_gpio()                            = 0;
@@ -53,6 +54,7 @@ public:
     virtual void set_device_gpio(int gpio)                       ;
     virtual void set_device_owner_phone_number(QString number)   ;
 
+    virtual QString get_ip()                                     ;
     virtual QString get_device_name()                            ;
     virtual QString get_device_type()                            ;
     virtual int     get_device_gpio()                            ;
@@ -68,8 +70,8 @@ public:
 
 
 
-    int set_device_tempture(int pid, int tempture)              ;
-    int get_device_tempture(int pid)                            ;
+    int set_device_tempture(int pid, int tempture)               ;
+    int get_device_tempture(int pid)                             ;
 
 signals:
 

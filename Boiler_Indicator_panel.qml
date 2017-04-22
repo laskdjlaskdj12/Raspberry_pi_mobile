@@ -14,6 +14,10 @@ Rectangle_Design_Form {
     property alias account_button: account_rectangle_button
     property alias sidemenu_to_menu: menu_back_button
     property alias side_menu: side_menu
+    property string err_tag : err_label.text
+    property int  panel_count: dial_list.count
+
+    //==================== JAVASCRIPT ====================
 
     //device_add_page로 가기 디바이스 추가 버튼을 눌렀을시
     function add_device_button_click (){
@@ -62,9 +66,11 @@ Rectangle_Design_Form {
         }
     }
 
+    //==================== SIGNAL AREA ====================
     //디바이스 제거시 pid를 메인함수로 전송해서 제거를함
     signal remove_device_pid(string device_pid)
 
+    //==================== 디바이스 패널 리스트 뷰 ====================
     //메인컨트롤러는 리스트 형태 그리고 리스트를 누르면 해당 위치별로 등록된 컨트롤러가 나타나서 조절을 가능하게함
     Item{
         id: boiler_main_panel
@@ -115,7 +121,7 @@ Rectangle_Design_Form {
 
         }
 
-        //디바이스 리스트 뷰
+        //==================== 디바이스 패널 리스트 뷰 ====================
         ListView {
             id: listView
             x: 8
@@ -125,7 +131,7 @@ Rectangle_Design_Form {
             delegate: Dial_List_Delicate{
 
 
-                //디바이스 패널을 remove 할 버튼
+                //==================== 디바이스 패널 remove ====================
                 Rectangle {
                     id: remove_panel
                     x: 583
@@ -141,8 +147,8 @@ Rectangle_Design_Form {
                         height: parent.height
                         onClicked: {
 
-                            console.debug(qsTr("Remove index : "), panel_current_index)
-                            remove_device_panel( panel_current_index )
+                            console.debug(qsTr("Remove index : "), panel_index)
+                            remove_device_panel( panel_index )
                             remove_device_pid( device_pid )
                         }
                     }
@@ -164,7 +170,7 @@ Rectangle_Design_Form {
         }
 
 
-        //사이드 메뉴
+        //==================== 사이드 바 menu ====================
         //사이드 메뉴로는 컴포넌트 자동 업데이트나 아니면 로그인 상태 등등을 표시함
 
         Rectangle{
@@ -197,7 +203,7 @@ Rectangle_Design_Form {
 
         }
 
-        //디바이스 추가 제거
+        //==================== 디바이스 add ====================
         RowLayout {
             x: 273
             y: 124
@@ -207,9 +213,9 @@ Rectangle_Design_Form {
                 text: qsTr("Add")
                 onClicked: {
 
-                   main_indicator_panel.state = "Add_Device_state"
+                   //main_indicator_panel.state = "Add_Device_state"
 
-                   //add_device(dial_list.count, dial_list.count, 0, 0, "12321")
+                   add_device(dial_list.count, dial_list.count, 0, 0, "12321")
 
                 }
 
@@ -220,29 +226,36 @@ Rectangle_Design_Form {
                 text: qsTr("Remove")
                 onClicked: {
                     dial_list.remove(listView.currentIndex)
-                    listView.remove(listView.currentIndex)
                 }
             }
         }
+
+        Label {
+            id: err_label
+            x: 23
+            y: 130
+            width: 230
+            height: 37
+            text: qsTr("")
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+        }
     }
 
-    //리스트 모델
+    //==================== 디바이스 패널 리스트 모델 ====================
     Dial_List_Model{
         id: dial_list
 
     }
 
-    //디바이스 추가시 페이지
+    //==================== 디바이스 ADD 페이지 ====================
     Device_Add_Page {
         id: device_Add_Page
         x: 720
         y: 0
     }
 
-    //디아비스 제거시 페이지
-
-
-    ///This is state and transistion area
+    //==================== 페이지 state ====================
 
     states: [
         State {
@@ -299,6 +312,7 @@ Rectangle_Design_Form {
 
     ]
 
+    //==================== 페이지 transistions ====================
     transitions: [
 
         Transition {
