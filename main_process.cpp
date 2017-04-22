@@ -271,11 +271,15 @@ void Main_Process::set_device_tempture(int value, QString pid)
      * 1. 해당 pid의 db 쿼리로 검색후 value를 저장
      * 2. 해당 value를 세팅후 전송
      * 3. value가 정상적일때 change_device_tempture 의 자바스크립트를 실행
-     * 4. setting_tempture를 받아온 값의 tempture로 변경
-     *
+     * 4. setting_tempture를 받아온 값의 setting_tempture를 변경
+     * 5. 문제 : device_tempture의 패널 index를 어떻게 main_panel의 object로 전송받을수 있는지
      * */
     try{
 
+        if( controler->set_device_tempture (pid,value) < 0){
+
+            throw QString("Error of set_tempture device protocol");
+        }
 
 
     }catch(QString &e){

@@ -128,34 +128,7 @@ Rectangle_Design_Form {
             y: 178
             width: 700
             height: 700
-            delegate: Dial_List_Delicate{
-
-
-                //==================== 디바이스 패널 remove ====================
-                Rectangle {
-                    id: remove_panel
-                    x: 583
-                    y: 60
-                    width: 109
-                    height: 27
-                    color: "#ff8000"
-
-                    MouseArea{
-
-                        id: remove_panel_button
-                        width: parent.width
-                        height: parent.height
-                        onClicked: {
-
-                            console.debug(qsTr("Remove index : "), panel_index)
-                            remove_device_panel( panel_index )
-                            remove_device_pid( device_pid )
-                        }
-                    }
-                }
-
-
-            }
+            delegate: dial_delegate
 
             model: dial_list
 
@@ -213,9 +186,9 @@ Rectangle_Design_Form {
                 text: qsTr("Add")
                 onClicked: {
 
-                   //main_indicator_panel.state = "Add_Device_state"
+                    //main_indicator_panel.state = "Add_Device_state"
 
-                   add_device(dial_list.count, dial_list.count, 0, 0, "12321")
+                    add_device(dial_list.count, dial_list.count, 0, 0, "12321")
 
                 }
 
@@ -242,6 +215,33 @@ Rectangle_Design_Form {
         }
     }
 
+    //==================== 다이얼 delegate ====================
+    Dial_List_Delicate{
+        id: dial_delegate
+
+        //==================== 디바이스 패널 remove ====================
+        Rectangle {
+            id: remove_panel
+            x: 583
+            y: 60
+            width: 109
+            height: 27
+            color: "#ff8000"
+
+            MouseArea{
+
+                id: remove_panel_button
+                width: parent.width
+                height: parent.height
+                onClicked: {
+
+                    console.debug(qsTr("Remove index : "), panel_index)
+                    remove_device_panel( panel_index )
+                    remove_device_pid( device_pid )
+                }
+            }
+        }
+    }
     //==================== 디바이스 패널 리스트 모델 ====================
     Dial_List_Model{
         id: dial_list

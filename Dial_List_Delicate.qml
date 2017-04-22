@@ -12,8 +12,9 @@ Rectangle{
     property alias current_tempture: current_tempture
     property alias device_name: device_name
     property string device_pid: panel_pid
+    property int    device_panel_index: panel_index
 
-    signal change_tempture(int value, string device_pid)
+    signal change_tempture(int value, string device_pid, int index)
 
     width: 700
     height: 280
