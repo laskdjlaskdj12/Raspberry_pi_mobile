@@ -74,6 +74,7 @@ Rectangle_Design_Form {
     //메인컨트롤러는 리스트 형태 그리고 리스트를 누르면 해당 위치별로 등록된 컨트롤러가 나타나서 조절을 가능하게함
     Item{
         id: boiler_main_panel
+        objectName: "boiler_main_panel"
         width: parent.width
         height: parent.height
         Material.theme: Material.Dark
@@ -124,11 +125,37 @@ Rectangle_Design_Form {
         //==================== 디바이스 패널 리스트 뷰 ====================
         ListView {
             id: listView
+            objectName: "listView"
             x: 8
             y: 178
             width: 700
             height: 700
-            delegate: dial_delegate
+            delegate: Dial_List_Delicate{
+                id: dial_delegate
+                objectName: "dial_delegate"
+                //==================== 디바이스 패널 remove ====================
+                Rectangle {
+                    id: remove_panel
+                    x: 583
+                    y: 60
+                    width: 109
+                    height: 27
+                    color: "#ff8000"
+
+                    MouseArea{
+
+                        id: remove_panel_button
+                        width: parent.width
+                        height: parent.height
+                        onClicked: {
+
+                            console.debug(qsTr("Remove index : "), panel_index)
+                            remove_device_panel( panel_index )
+                            remove_device_pid( device_pid )
+                        }
+                    }
+                }
+            }
 
             model: dial_list
 
@@ -212,34 +239,6 @@ Rectangle_Design_Form {
             text: qsTr("")
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-        }
-    }
-
-    //==================== 다이얼 delegate ====================
-    Dial_List_Delicate{
-        id: dial_delegate
-
-        //==================== 디바이스 패널 remove ====================
-        Rectangle {
-            id: remove_panel
-            x: 583
-            y: 60
-            width: 109
-            height: 27
-            color: "#ff8000"
-
-            MouseArea{
-
-                id: remove_panel_button
-                width: parent.width
-                height: parent.height
-                onClicked: {
-
-                    console.debug(qsTr("Remove index : "), panel_index)
-                    remove_device_panel( panel_index )
-                    remove_device_pid( device_pid )
-                }
-            }
         }
     }
     //==================== 디바이스 패널 리스트 모델 ====================

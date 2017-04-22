@@ -46,7 +46,7 @@ public slots:
     void remove_raspberry_device(QString pid);
 
     //디바이스 제거시 slot
-    void set_device_tempture (int value, QString pid);
+    void set_device_tempture (int value, QString pid, int index);
 
 private:
     /*//디바이스를 추가함
@@ -86,6 +86,15 @@ private:
 
     //디바이스 추가 오브젝트
     QObject* add_device_obj;
+
+    //디바이스 메인 패널 의 메인 메뉴
+    QObject* panel_menu_obj;
+
+    //디바이스 리스트 뷰 오브젝트
+    QObject* list_view_delegate_obj;
+
+    //디바이스 리스트 델리게이트 오브젝트
+    QObject* dial_delegate_obj;
 
     //디바이스 리스트
     QList<QObject*> dev_list;

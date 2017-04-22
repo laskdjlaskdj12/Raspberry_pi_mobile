@@ -58,6 +58,11 @@ int Main_Process::init_main_object ()
 
         add_device_obj = main_window_obj->findChild<QObject*>("device_add_panel_obj");
 
+        panel_menu_obj = main_indicator_panel_obj->findChild<QObject*>("boiler_main_panel");
+
+        list_view_delegate_obj = panel_menu_obj->findChild<QObject*>("listView");
+
+        dial_delegate_obj = list_view_delegate_obj->findChild<QObject*>("dial_delegate");
 
         return 0;
     }
@@ -81,7 +86,7 @@ int Main_Process::init_signal()
     QObject::connect (main_indicator_panel_obj, SIGNAL(remove_device_pid(QString)), this, SLOT(remove_raspberry_device (QString)));
 
     //tempture가 바귀었을때
-    QObject::connect (add_device_obj, SIGNAL(add_raspberry_Device(QString, int, QString)), this, SLOT(add_raspberry_device(QString,int,QString)));
+    QObject::connect (dial_delegate_obj, SIGNAL(change_tempture(int, QString, int)), this, SLOT(set_device_tempture(int,QString,int)));
 
 }
 
@@ -265,7 +270,7 @@ void Main_Process::remove_raspberry_device(QString pid)
     }
 }
 
-void Main_Process::set_device_tempture(int value, QString pid)
+void Main_Process::set_device_tempture(int tempture, QString pid, int index)
 {
     /*
      * 1. 해당 pid의 db 쿼리로 검색후 value를 저장
@@ -276,11 +281,17 @@ void Main_Process::set_device_tempture(int value, QString pid)
      * */
     try{
 
-        if( controler->set_device_tempture (pid,value) < 0){
+        if( controler->set_device_tempture (pid.toInt (), tempture) < 0){
 
             throw QString("Error of set_tempture device protocol");
         }
 
+        QVariant _return_value_;
+
+        QMetaObject::invokeMethod(main_indicator_panel_obj, "change_device_tempture",
+                                  Q_RETURN_ARG(QVariant, _return_value_),//return 값은 NULL
+                                  Q_ARG(int, index),                       //Panel_index
+                                  Q_ARG(int, tempture));                   //Device_tempture
 
     }catch(QString &e){
 

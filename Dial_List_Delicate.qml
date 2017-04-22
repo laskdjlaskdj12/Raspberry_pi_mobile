@@ -14,7 +14,7 @@ Rectangle{
     property string device_pid: panel_pid
     property int    device_panel_index: panel_index
 
-    signal change_tempture(int value, string device_pid, int index)
+    signal change_tempture(int value, string device_pid)
 
     width: 700
     height: 280
