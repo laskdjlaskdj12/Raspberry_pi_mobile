@@ -268,7 +268,7 @@ int Main_Process::load_panel_obj()
      * 1. 서버에서 load_device_list의 json을 전송함
      * 2. 패널목록을 QJsonObject으로 받은후 obj["device_list"]에 있는 객체 배열의 갯수대로 while문을 돌려서 QJsonObject으로 받음
      * 3. Device_add_Page가 아닌 Main_Panel페이지내에 있는 자바스크립트를 실행함
-     *
+     * 4. db내에 있는 pid를 검사해서 만약 pid가 같을 경우 db에 넣지 않음
      * */
     try{
 
@@ -300,17 +300,33 @@ int Main_Process::load_panel_obj()
             //리턴 밸류는 없음
             QVariant _return_value_;
 
-            //디바이스 메인 패널오브젝트에 add_device() 자바스크립트 파라미터를 input하고 실행함
             QMetaObject::invokeMethod(main_indicator_panel_obj, "add_device",
-                                      Q_RETURN_ARG(QVariant, _return_value_),                   //return 값은 NULL
-                                      Q_ARG(int, _qml_list_size_parameter_),          //Panel_index
-                                      Q_ARG(QString, _it_obj_["d_name"].toString ()), //Device_name_string
-                    Q_ARG(int, _qml_tempture_parameter_),                             //Current_tempture
-                    Q_ARG(int, 0),                                                    //Setting_tempture
-                    Q_ARG(QString, _it_obj_["d_pid"].toString ()));                   //Device_pid
+                                      Q_RETURN_ARG(QVariant, _return_value_),//return 값은 NULL
+                                      Q_ARG(QVariant, _qml_list_size_parameter_), //Panel_index
+                                      Q_ARG(QVariant, _it_obj_["d_name"].toString ()),                //Device_name_string
+                                      Q_ARG(QVariant, _qml_tempture_parameter_),                         //Current_tempture
+                                      Q_ARG(QVariant, 0),                         //Setting_tempture
+                                      Q_ARG(QVariant, _it_obj_["d_name"].toString ()));
+
+            //디바이스 메인 패널오브젝트에 add_device() 자바스크립트 파라미터를 input하고 실행함
+z
+
 
             //디바이스 패널을 저장할 db
             QSqlQuery _device_db_query_ (db_);
+
+            //먼저 pid가 있는지를 검사함
+            _device_db_query_.prepare ("SELECT * FROM `Device_list` WHERE `device_pid` = :pid ");
+            _device_db_query_.bindValue (":pid", _it_obj_["d_pid"].toString ());
+
+            if( _device_db_query_.exec () == false){    throw _device_db_query_.lastError ();}
+
+            _device_db_query_.last ();
+
+            //만약 해당 pid가 존재할경우 continue로 넘어감
+            if(_device_db_query_.at () + 1 > 0){
+                continue;
+            }
 
             _device_db_query_.prepare ("INSERT INTO `Device_list`(`device_type`, `device_name`, `device_pid`, `device_gpio`, `access_mobile_number`, `device_active`)"
                                        "VALUES (:type, :name, :pid, :gpio, :access_mobile, :device_active);");

@@ -311,6 +311,7 @@ QJsonObject adjust_device_controler::load_device_list()
         return _rcv_obj_;
 
     }catch (QString& e){
+
         qDebug()<<"[Error] : " << e;
 
         QJsonObject res_obj;
