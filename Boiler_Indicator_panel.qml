@@ -151,7 +151,7 @@ Rectangle_Design_Form {
 
                             console.debug(qsTr("Remove index : "), panel_index)
                             remove_device_panel( panel_index )
-                            remove_device_pid( device_pid )
+                            main_indicator_panel.remove_device_pid( device_pid )
                         }
                     }
                 }
@@ -213,9 +213,10 @@ Rectangle_Design_Form {
                 text: qsTr("Add")
                 onClicked: {
 
-                    //main_indicator_panel.state = "Add_Device_state"
+                    main_indicator_panel.state = "Add_Device_state"
 
-                    add_device(dial_list.count, dial_list.count, 0, 0, "12321")
+                    //디바이스들 추가시 실험할때 사용함
+                    //add_device(dial_list.count, dial_list.count, 0, 0, "12321")
 
                 }
 
@@ -250,6 +251,7 @@ Rectangle_Design_Form {
     //==================== 디바이스 ADD 페이지 ====================
     Device_Add_Page {
         id: device_Add_Page
+        objectName: "device_add_panel_obj"
         x: 720
         y: 0
     }

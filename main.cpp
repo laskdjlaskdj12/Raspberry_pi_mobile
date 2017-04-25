@@ -13,12 +13,16 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     QQmlEngine engine;
-    QQmlComponent component(&engine, QUrl(QStringLiteral("qrc:/main.qml")));
+    QQmlComponent component ( &engine, QUrl(QStringLiteral ("qrc:/main.qml")));
     QObject* root_obj = component.create ();
 
-    //Main_Process* progress = new Main_Process;
+    Main_Process* progress = new Main_Process;
 
-    //progress->set_root_qml_object (root_obj);
+    progress->set_root_qml_object (root_obj);
+
+    progress->init_main_object ();
+
+    progress->init_signal ();
 
 
 

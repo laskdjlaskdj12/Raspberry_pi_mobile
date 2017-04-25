@@ -34,7 +34,7 @@ Rectangle_Design_Form {
             y: 317
             width: 341
             height: 62
-            text: qsTr("add_Device_type")
+            text: qsTr("Moter")
             onActiveFocusChanged: {
                 text: qsTr("")
             }
@@ -75,7 +75,7 @@ Rectangle_Design_Form {
         y: 317
         width: 341
         height: 62
-        text: qsTr("Text Field")
+        text: qsTr("Test_Moter")
         onActiveFocusChanged: {
             text: qsTr("")
         }
@@ -90,7 +90,7 @@ Rectangle_Design_Form {
         text: qsTr("Add")
         onClicked: {
             console.log("[Info] : add_device_to_raspberry : ",add_device_name," : ",add_device_gpio," : ",add_device_type)
-            add_raspberry_Devcie(add_device_name, add_device_gpio, add_device_type)
+            add_raspberry_Device(add_device_name, add_device_gpio, add_device_type)
             gpio_field.value = 0
             device_name_field.text = qsTr("")
             device_type_field.text = qsTr("")

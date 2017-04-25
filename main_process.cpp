@@ -56,7 +56,7 @@ int Main_Process::init_main_object ()
 
         main_indicator_panel_obj = main_window_obj->findChild<QObject*>("main_indicator_panel_obj");
 
-        add_device_obj = main_window_obj->findChild<QObject*>("device_add_panel_obj");
+        add_device_obj = main_indicator_panel_obj->findChild<QObject*>("device_add_panel_obj");
 
         panel_menu_obj = main_indicator_panel_obj->findChild<QObject*>("boiler_main_panel");
 
@@ -77,7 +77,7 @@ int Main_Process::init_main_object ()
 int Main_Process::init_signal()
 {
     //LoginWindow를 connect시킴
-    QObject::connect (login_window_obj, SIGNAL(req_acc_dev(QString)), this, SLOT(check_ip_connect(QString)));
+    QObject::connect (login_window_obj, SIGNAL(req_acc_dev(QString)), this, SLOT(ip_connect_to_raspberry(QString)));
 
     //Device_add_obj를 connect시킴
     QObject::connect (add_device_obj, SIGNAL(add_raspberry_Device(QString, int, QString)), this, SLOT(add_raspberry_device(QString,int,QString)));
@@ -124,8 +124,10 @@ void Main_Process::ip_connect_to_raspberry(QString ip)
         //states 를 loadingscreen으로 변경
         main_window_obj -> setProperty ("state", "Login_Loading_Page");
 
-        //받은 ip으로 ip를 요청함
+        //받은 ip을 ip_login 와 controler에 각각 세팅함
         ip_login->set_ip (ip);
+        controler->set_ip (ip);
+
         if (ip_login->login_to_device () < 0){
 
 
@@ -137,8 +139,138 @@ void Main_Process::ip_connect_to_raspberry(QString ip)
             return;
         }
 
+        // 현재 추가되어있는 디바이스들을 로딩함
+        if( load_panel_obj () < 0){
+
+            throw QString(" recv device_panel_obj");
+        }
+
         //ip연결이 성공시 main_indicator로 state를 변경함
-        main_window_obj -> setProperty ("state", "main_indicator_panel_obj");
+        main_window_obj -> setProperty ("state", "Main_Panel_Page");
+
+    }catch(QSqlError& e){
+
+        qDebug()<<"[Error] : "<<e.text ();
+
+    }catch(QString &e){
+
+        qDebug()<<"[Error] : "<<e;
+    }
+}
+
+void Main_Process::add_raspberry_device(QString d_name, int d_gpio, QString d_type)
+{
+    /*
+     * 1. contlorer->add_device()함수를 호출해서 디바이스를 추가함
+     * 2. pid는 해당 디바이스 리스트 패널에 넣음
+     * 3. 입력되고 나고 만약 추가가 안될경우 Error문구를 device_add_page에 있는 라벨로 통해서 전송함
+     * 4. 성공적으로 add가 될경우 자바스크립트의 add_device()로 넣음
+     * 5. states를 main_panel_page_obj으로 전환
+     * */
+
+    try{
+
+        qDebug()<<"[Debug] : add_raspberry_device_procedure";
+
+        int _ret_pid_ = 0;
+
+        controler->set_device_name (d_name);
+        controler->set_device_gpio (d_gpio);
+        controler->set_device_type (d_type);
+
+        _ret_pid_ = controler->add_device ();
+
+        if( _ret_pid_ < 0){
+            throw QString("Error of adding_device");
+
+        }
+
+        //리턴밸류는 없음
+        QVariant _return_value_;
+
+        //qml 패널 맥시멈 크기
+        int _qml_list_size_parameter_ = main_indicator_panel_obj->property ("panel_count").toInt ();
+
+        //자바스크립트에 add_device()를 호출
+        QMetaObject::invokeMethod(main_indicator_panel_obj, "add_device",
+                                  Q_RETURN_ARG(QVariant, _return_value_),//return 값은 NULL
+                                  Q_ARG(QVariant, _qml_list_size_parameter_), //Panel_index
+                                  Q_ARG(QVariant, d_name),                //Device_name_string
+                                  Q_ARG(QVariant, 0),                         //Current_tempture
+                                  Q_ARG(QVariant, 0),                         //Setting_tempture
+                                  Q_ARG(QVariant, QString::number (_ret_pid_)));                    //Device_pid
+        //state를 Main_State로 변경함
+        main_indicator_panel_obj->setProperty ("states", "Main_Panel_Page");
+
+
+
+    }catch(QString &e){
+
+        main_indicator_panel_obj->setProperty ("err_tag", " Error of adding device from server : " + e);
+    }
+
+}
+
+void Main_Process::remove_raspberry_device(QString pid)
+{
+    /*
+     * 1. 각 디바이스 패널에 remove버튼이 emit될시 pid를 remove
+     * 2. 자바스크립트 제거루틴은 미리 제거루틴을 실행함 --> 제거루틴 코드 생성 안해도됨
+     * 3. 만약 remove가 fail일시 remove하지 않고 해당 버튼의 색을 변경
+     * */
+    try{
+
+        if ( controler->remove_device (pid.toInt ()) < 0){
+            throw QString("Error of remove device protocol");
+        }
+
+    }catch(QString &e){
+
+        //디바이스 오브젝트의 로그를 출력
+        add_device_obj->setProperty ("device_states_label", e);
+    }
+}
+
+void Main_Process::set_device_tempture(int tempture, QString pid, int index)
+{
+    /*
+     * 1.
+     * 2. 해당 value를 세팅후 전송
+     * 3. 리ㅈ턴된 tempture이  정상적일때 change_device_tempture 의 자바스크립트를 실행
+     * 4. setting_tempture를 받아온 값의 setting_tempture를 변경
+     * 5. 문제 : device_tempture의 패널 index를 어떻게 main_panel의 object로 전송받을수 있는지
+     * */
+    try{
+
+        int _return_tempture_ = controler->set_device_tempture (pid.toInt (), tempture);
+        if( _return_tempture_ < 0){
+
+            throw QString("Error of set_tempture device protocol");
+        }
+
+        QVariant _return_value_;
+
+        QMetaObject::invokeMethod(main_indicator_panel_obj, "change_device_tempture",
+                                  Q_RETURN_ARG(QVariant, _return_value_),//return 값은 NULL
+                                  Q_ARG(int, index),                       //Panel_index
+                                  Q_ARG(int, _return_tempture_));                   //Device_tempture
+
+    }catch(QString &e){
+
+        //디바이스 오브젝트의 로그를 출력
+        add_device_obj->setProperty ("device_states_label", e);
+    }
+}
+
+int Main_Process::load_panel_obj()
+{
+    /*
+     * 1. 서버에서 load_device_list의 json을 전송함
+     * 2. 패널목록을 QJsonObject으로 받은후 obj["device_list"]에 있는 객체 배열의 갯수대로 while문을 돌려서 QJsonObject으로 받음
+     * 3. Device_add_Page가 아닌 Main_Panel페이지내에 있는 자바스크립트를 실행함
+     *
+     * */
+    try{
 
         //디바이스 목록을 로딩
         QJsonObject _device_list_ = controler -> load_device_list ();
@@ -195,107 +327,17 @@ void Main_Process::ip_connect_to_raspberry(QString ip)
 
         }
 
-    }catch(QSqlError& e){
-        qDebug()<<"[Error] : "<<e.text ();
-    }
-}
+        return 0;
 
-void Main_Process::add_raspberry_device(QString d_name, int d_gpio, QString d_type)
-{
-    /*
-     * 1. contlorer->add_device()함수를 호출해서 디바이스를 추가함
-     * 2. pid는 해당 디바이스 리스트 패널에 넣음
-     * 3. 입력되고 나고 만약 추가가 안될경우 Error문구를 device_add_page에 있는 라벨로 통해서 전송함
-     * 4. 성공적으로 add가 될경우 자바스크립트의 add_device()로 넣음
-     * 5. states를 main_panel_page_obj으로 전환
-     * */
+    }catch(QSqlError &e){
 
-    try{
-        int _ret_pid_ = 0;
+        qDebug()<<"[Error] : "<< e.text ();
 
-        controler->set_device_name (d_name);
-        controler->set_device_gpio (d_gpio);
-        controler->set_device_type (d_type);
-
-        _ret_pid_ = controler->add_device ();
-
-        if( _ret_pid_ < 0){
-            throw QString("Error of adding_device");
-
-        }
-
-        //리턴밸류는 없음
-        QVariant _return_value_;
-
-        //qml 패널 맥시멈 크기
-        int _qml_list_size_parameter_ = main_indicator_panel_obj->property ("panel_count").toInt ();
-
-        //자바스크립트에 add_device()를 호출
-        QMetaObject::invokeMethod(main_indicator_panel_obj, "add_device",
-                                  Q_RETURN_ARG(QVariant, _return_value_),//return 값은 NULL
-                                  Q_ARG(int, _qml_list_size_parameter_), //Panel_index
-                                  Q_ARG(QString, d_name),                //Device_name_string
-                                  Q_ARG(int, 0),                         //Current_tempture
-                                  Q_ARG(int, 0),                         //Setting_tempture
-                                  Q_ARG(QString, QString::number (_ret_pid_)));                    //Device_pid
-        //state를 Main_State로 변경함
-        main_indicator_panel_obj->setProperty ("states", "Main_state");
-
-
-
+        return -1;
     }catch(QString &e){
 
-        main_indicator_panel_obj->setProperty ("err_tag", " Error of adding device from server : " + e);
-    }
+        qDebug()<<"[Error] : "<< e;
 
-}
-
-void Main_Process::remove_raspberry_device(QString pid)
-{
-    /*
-     * 1. 각 디바이스 패널에 remove버튼이 emit될시 pid를 remove
-     * 2. 자바스크립트 제거루틴은 미리 제거루틴을 실행함 --> 제거루틴 코드 생성 안해도됨
-     * 3. 만약 remove가 fail일시 remove하지 않고 해당 버튼의 색을 변경
-     * */
-    try{
-
-        if ( controler->remove_device (pid.toInt ()) < 0){
-            throw QString("Error of remove device protocol");
-        }
-
-    }catch(QString &e){
-
-        //디바이스 오브젝트의 로그를 출력
-        add_device_obj->setProperty ("device_states_label", e);
-    }
-}
-
-void Main_Process::set_device_tempture(int tempture, QString pid, int index)
-{
-    /*
-     * 1. 해당 pid의 db 쿼리로 검색후 value를 저장
-     * 2. 해당 value를 세팅후 전송
-     * 3. value가 정상적일때 change_device_tempture 의 자바스크립트를 실행
-     * 4. setting_tempture를 받아온 값의 setting_tempture를 변경
-     * 5. 문제 : device_tempture의 패널 index를 어떻게 main_panel의 object로 전송받을수 있는지
-     * */
-    try{
-
-        if( controler->set_device_tempture (pid.toInt (), tempture) < 0){
-
-            throw QString("Error of set_tempture device protocol");
-        }
-
-        QVariant _return_value_;
-
-        QMetaObject::invokeMethod(main_indicator_panel_obj, "change_device_tempture",
-                                  Q_RETURN_ARG(QVariant, _return_value_),//return 값은 NULL
-                                  Q_ARG(int, index),                       //Panel_index
-                                  Q_ARG(int, tempture));                   //Device_tempture
-
-    }catch(QString &e){
-
-        //디바이스 오브젝트의 로그를 출력
-        add_device_obj->setProperty ("device_states_label", e);
+        return -1;
     }
 }

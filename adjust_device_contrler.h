@@ -37,7 +37,8 @@ public:
     virtual int update_device_info(int pid)                      = 0;
     virtual int check_device_state()                             = 0;
     virtual int add_auto_upgrade_code()                          = 0;
-    virtual QJsonObject load_device_list ()                      = 0;
+    virtual QJsonObject load_device_list()                       = 0;
+    virtual void flush_device_property()                         = 0;
 
 };
 
@@ -67,6 +68,7 @@ public:
     virtual int check_device_state()                             ;
     virtual int add_auto_upgrade_code()                          ;
     virtual QJsonObject load_device_list ()                      ;
+    virtual void flush_device_property()                         ;
 
 
 

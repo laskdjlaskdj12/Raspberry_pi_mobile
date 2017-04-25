@@ -48,7 +48,7 @@ Rectangle{
 
         //온도가 바뀌었을경우 시그널을 전송함
         onValueChanged: {
-            change_tempture(value*100, panel_pid)
+            parent.change_tempture(value*100, panel_pid)
         }
     }
 

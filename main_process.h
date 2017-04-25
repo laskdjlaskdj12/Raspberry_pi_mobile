@@ -20,8 +20,10 @@
 
 //메인 윈도우
 class Main_Process: public QObject{
-public:
+
     Q_OBJECT
+
+public:
 
     Main_Process(QObject* parent = 0);
     ~Main_Process();
@@ -49,6 +51,8 @@ public slots:
     void set_device_tempture (int value, QString pid, int index);
 
 private:
+    int load_panel_obj();
+
     /*//디바이스를 추가함
     int add_device(int Panel_index,
                    QString Device_name,

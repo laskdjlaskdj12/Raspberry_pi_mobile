@@ -84,23 +84,16 @@ int adjust_device_controler::add_device()
 {
     try{
 
-        QSqlQuery db_query (db_);
+        /*
+         * 1. 설정된 프로퍼티를 먼저 서버에 전송
+         * 2. 서버에서 리턴값이 true가 왔을경우 db에 임포트
+         * 3. 만약 임포트가 안됬으면 바로 false로 리턴함
+         * 4. 임포트후 프로퍼티들을 flush_device_property()호출
+         *
+         *
+         * */
 
-        db_query.prepare ("INSERT INTO `Device_list`(`device_type`, `device_name`, `device_pid`, `device_gpio`, `access_mobile_number`, `device_active`)"
-                          "VALUES (:type, :name, :pid, :gpio, :access_mobile, :device_active);");
 
-        //임시로 pid를 0으로 설정
-        db_query.bindValue (":type", temp_device_type_);
-        db_query.bindValue (":name", temp_name_);
-        db_query.bindValue (":pid", "0");
-        db_query.bindValue (":gpio", temp_device_gpio_);
-
-        //현재 전화번호를 java를 임포트해야 얻을수있으므로 중단
-        //db_query.bindValue (":identify_mobile_number", owner_phone_number_);
-        db_query.bindValue (":access_mobile", 0);
-        db_query.bindValue (":device_active",(int)true);
-
-        if (db_query.exec () == false){   throw Boiler_Controler_Exception(db_query.lastError ().text (), __LINE__);}
 
         qDebug()<<"====================[Json_Info]====================";
         qDebug()<<QString (QJsonDocument(add_device_json_form ()).toJson ());
@@ -121,22 +114,32 @@ int adjust_device_controler::add_device()
 
         if (_device_add_return_["error"].isNull () == false){ throw Boiler_Controler_Exception(_device_add_return_["message"].toString (), __LINE__);}
 
+        QSqlQuery db_query (db_);
 
-        //서버에서 리턴되는 pid와 hash를 db에 업데이트
-        db_query.prepare ("UPDATE `Device_list` SET `device_pid`= (:pid), `device_hash`= (:hash) WHERE `device_type`= (:type) AND `device_name`= (:name) AND `device_gpio`= (:gpio) AND `device_pid` = 0");
-        db_query.bindValue (":pid", QString::number(_device_add_return_["pid"].toInt ()));
-        db_query.bindValue (":hash", _device_add_return_["hash"].toString ());
+        db_query.prepare ("INSERT INTO `Device_list`(`device_type`, `device_name`, `device_pid`, `device_gpio`, `access_mobile_number`, `device_active`)"
+                          "VALUES (:type, :name, :pid, :gpio, :access_mobile, :device_active);");
+
+        //임시로 pid를 0으로 설정
         db_query.bindValue (":type", temp_device_type_);
         db_query.bindValue (":name", temp_name_);
+        db_query.bindValue (":pid",  _device_add_return_["pid"].toString ());
         db_query.bindValue (":gpio", temp_device_gpio_);
+
+        //현재 전화번호를 java를 임포트해야 얻을수있으므로 중단
+        //db_query.bindValue (":identify_mobile_number", owner_phone_number_);
+        db_query.bindValue (":access_mobile", 0);
+        db_query.bindValue (":device_active",(int)true);
 
         if (db_query.exec () == false){   throw Boiler_Controler_Exception(db_query.lastError ().text (), __LINE__);}
 
+        //설정된 프로퍼티들을 전부 삭제함
+        flush_device_property ();
 
         return _device_add_return_["pid"].toInt ();
 
     }catch(Boiler_Controler_Exception& e){
 
+        //에러를 리턴함
         e.get_error();
         return -1;
     }
@@ -187,6 +190,9 @@ int adjust_device_controler::remove_device(int pid)
 
         qDebug()<<"[Info] : =================== Success delete ["<< pid <<"] ===================";
 
+        //설정된 프로퍼티들을 전부 삭제함
+        flush_device_property ();
+
         return 0;
 
     }catch(Boiler_Controler_Exception& e){
@@ -201,7 +207,7 @@ int adjust_device_controler::update_device_info(int pid)
 
         if (net_con.connect_raspberry (ip_, true) == false){  throw Boiler_Controler_Exception("connect_device is fail", __LINE__);}
 
-        if(net_con.send_Object ( update_device_json_form (QString::number (pid))) == false){   throw Boiler_Controler_Exception("add_device sending add_Json_protocol fail", __LINE__);}
+        if (net_con.send_Object ( update_device_json_form (QString::number (pid))) == false){   throw Boiler_Controler_Exception("add_device sending add_Json_protocol fail", __LINE__);}
 
         QJsonObject _device_add_return_ = net_con.recv_Object ();
 
@@ -210,6 +216,9 @@ int adjust_device_controler::update_device_info(int pid)
         if (_device_add_return_.isEmpty ()){ throw Boiler_Controler_Exception("Recv from server by add device protocol is fail", __LINE__);}
 
         if (_device_add_return_["error"].isNull () == false){ throw Boiler_Controler_Exception(_device_add_return_["message"].toString (), __LINE__);}
+
+        //설정된 프로퍼티들을 전부 삭제함
+        flush_device_property ();
 
         return 0;
 
@@ -243,7 +252,7 @@ int adjust_device_controler::check_device_state()
             qDebug()<<"==========================================";
 
 
-        }else{
+        }else {
 
             db_query.first ();
 
@@ -297,7 +306,7 @@ QJsonObject adjust_device_controler::load_device_list()
 
         net_con.disconnect_from_server ();
 
-        if(_rcv_obj_["Message"].isNull () == false){ throw _rcv_obj_["Message"].toString ();}
+        if (_rcv_obj_["Message"].isNull () == false){ throw _rcv_obj_["Message"].toString ();}
 
         return _rcv_obj_;
 
@@ -312,6 +321,14 @@ QJsonObject adjust_device_controler::load_device_list()
 
 
 
+}
+
+void adjust_device_controler::flush_device_property()
+{
+    temp_name_ = "";
+    temp_device_type_ = "";
+    temp_device_gpio_ = 0;
+    owner_phone_number_ = "";
 }
 
 int adjust_device_controler::set_device_tempture(int pid, int tempture)
@@ -337,7 +354,7 @@ int adjust_device_controler::set_device_tempture(int pid, int tempture)
 
         if (_rcv_obj_.isEmpty ()){ return 2;}
 
-        if(_rcv_obj_["Message"].isNull () == false){ throw _rcv_obj_["Message"].toString ();}
+        if (_rcv_obj_["Message"].isNull () == false){ throw _rcv_obj_["Message"].toString ();}
 
         return _rcv_obj_["tempture"].toInt ();
 
@@ -361,7 +378,7 @@ int adjust_device_controler::get_device_tempture(int pid)
 
         if (_rcv_obj_.isEmpty ()){ return 2;}
 
-        if(_rcv_obj_["Message"].isNull () == false){ throw _rcv_obj_["Message"].toString ();}
+        if (_rcv_obj_["Message"].isNull () == false){ throw _rcv_obj_["Message"].toString ();}
 
         return _rcv_obj_["tempture"].toInt ();
 

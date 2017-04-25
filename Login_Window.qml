@@ -7,10 +7,10 @@ import QtQuick.Controls.Material 2.1
 Rectangle_Design_Form {
 
     property alias login_botton: login_botton
-    property alias  error_edit: error_edit
+    property alias  error_edit:    error_edit
     property string ip_editor:   login_ip_editor.text
 
-    signal req_acc_dev(string ip)
+    signal req_acc_dev(string ip);
 
     Item{
 
@@ -82,7 +82,7 @@ Rectangle_Design_Form {
             y: 517
             width: 330
             height: 60
-            text: ""
+            text: "127.0.0.1"
             Layout.columnSpan: 2
             Layout.preferredHeight: 66
             Layout.preferredWidth: 363

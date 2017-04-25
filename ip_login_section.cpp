@@ -35,12 +35,13 @@ int Ip_Login_Section::login_to_device()
 
         if (_doc_.isNull () || _doc_.isEmpty ()){    throw Boiler_Controler_Exception(QString("Recv_Json document fail"), __LINE__);}
 
-        else if(_doc_.object ()["connect"].toBool () == true){
+        else if(_doc_.object ()["connect"].toBool () == true){      return 0;}
 
-            return 1;
-        }
+        else{   throw Boiler_Controler_Exception(QString("Error of recv"), __LINE__); }
 
-        return 0;
+        lib->disconnect_server ();
+
+        return -1;
 
     }catch(Boiler_Controler_Exception& e){
 
