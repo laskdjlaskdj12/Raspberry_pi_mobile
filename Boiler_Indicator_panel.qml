@@ -68,7 +68,8 @@ Rectangle_Design_Form {
 
     //==================== SIGNAL AREA ====================
     //디바이스 제거시 pid를 메인함수로 전송해서 제거를함
-    signal remove_device_pid(string device_pid)
+    signal remove_device_pid(string device_pid);
+    signal send_device_adjust_tempture(int value, string pid, int index);
 
     //==================== 디바이스 패널 리스트 뷰 ====================
     //메인컨트롤러는 리스트 형태 그리고 리스트를 누르면 해당 위치별로 등록된 컨트롤러가 나타나서 조절을 가능하게함
@@ -131,6 +132,14 @@ Rectangle_Design_Form {
             width: 700
             height: 700
             delegate: Dial_List_Delicate{
+                signal change_tempture_signal(int value, string device_pid, int panel_index)
+
+                function change_dial_tempture( value,  device_pid,  panel_index){
+
+                    console.debug(qsTr("change tempture :"), value, qsTr(" device_pid : "), device_pid, qsTr(" panel_index : "), panel_index);
+                    send_device_adjust_tempture(value, device_pid, panel_index);
+                }
+
                 id: dial_delegate
                 objectName: "dial_delegate"
                 //==================== 디바이스 패널 remove ====================

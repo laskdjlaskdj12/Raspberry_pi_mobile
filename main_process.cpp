@@ -62,7 +62,8 @@ int Main_Process::init_main_object ()
 
         list_view_delegate_obj = panel_menu_obj->findChild<QObject*>("listView");
 
-        dial_delegate_obj = list_view_delegate_obj->findChild<QObject*>("dial_delegate");
+        QQmlComponent* temp_listview_delicate = qvariant_cast<QQmlComponent *>(list_view_delegate_obj->property ("delegate"));
+        dial_delegate_obj = temp_listview_delicate->findChild<QObject*>("dial_delegate");
 
         return 0;
     }
@@ -86,8 +87,9 @@ int Main_Process::init_signal()
     QObject::connect (main_indicator_panel_obj, SIGNAL(remove_device_pid(QString)), this, SLOT(remove_raspberry_device (QString)));
 
     //tempture가 바귀었을때
-    QObject::connect (dial_delegate_obj, SIGNAL(change_tempture(int, QString, int)), this, SLOT(set_device_tempture(int,QString,int)));
+    QObject::connect (main_indicator_panel_obj, SIGNAL(send_device_adjust_tempture(int, QString, int)), this, SLOT(set_device_tempture(int,QString,int)));
 
+    return 0;
 }
 
 void Main_Process::set_root_qml_object(QObject *obj)
@@ -252,8 +254,8 @@ void Main_Process::set_device_tempture(int tempture, QString pid, int index)
 
         QMetaObject::invokeMethod(main_indicator_panel_obj, "change_device_tempture",
                                   Q_RETURN_ARG(QVariant, _return_value_),//return 값은 NULL
-                                  Q_ARG(int, index),                       //Panel_index
-                                  Q_ARG(int, _return_tempture_));                   //Device_tempture
+                                  Q_ARG(QVariant, index),                       //Panel_index
+                                  Q_ARG(QVariant, _return_tempture_));                   //Device_tempture
 
     }catch(QString &e){
 

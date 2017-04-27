@@ -14,7 +14,13 @@ Rectangle{
     property string device_pid: panel_pid
     property int    device_panel_index: panel_index
 
-    signal change_tempture(int value, string device_pid)
+    /*signal change_tempture_signal(int value, string device_pid, int panel_index)
+
+    function change_dial_tempture( value,  device_pid,  panel_index){
+
+        console.debug(qsTr("change tempture :"), value, qsTr(" device_pid : "), device_pid, qsTr(" panel_index : "), panel_index);
+        parent.change_tempture_signal(value, device_pid, panel_index);
+    }*/
 
     width: 700
     height: 280
@@ -48,7 +54,8 @@ Rectangle{
 
         //온도가 바뀌었을경우 시그널을 전송함
         onValueChanged: {
-            parent.change_tempture(value*100, panel_pid)
+            //change_tempture_signal(value*100, panel_pid, panel_index)
+            change_dial_tempture(value * 100, panel_pid, panel_index)
         }
     }
 
