@@ -309,8 +309,6 @@ int Main_Process::load_panel_obj()
                                       Q_ARG(QVariant, _it_obj_["d_name"].toString ()));
 
             //디바이스 메인 패널오브젝트에 add_device() 자바스크립트 파라미터를 input하고 실행함
-z
-
 
             //디바이스 패널을 저장할 db
             QSqlQuery _device_db_query_ (db_);
