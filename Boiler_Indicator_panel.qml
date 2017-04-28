@@ -38,11 +38,12 @@ Rectangle_Design_Form {
     function add_device(Panel_index, Device_name_String, Device_current_tempture, Device_setting_tempture, Device_pid){
 
         dial_list.append({
+                             panel_index           : Panel_index,
                              panel_name:             Device_name_String,
                              panel_current_tempture: Device_current_tempture,
                              panel_setting_tempture: Device_setting_tempture,
-                             panel_pid             : Device_pid,
-                             panel_index           : Panel_index
+                             panel_pid             : Device_pid
+
                          })
 
         //현재 패널창안에 있는 디바이스패널들의 인덱스를 전부 재설정

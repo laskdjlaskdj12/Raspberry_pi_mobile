@@ -244,6 +244,7 @@ void Main_Process::set_device_tempture(int tempture, QString pid, int index)
      * */
     try{
 
+        qDebug()<<"[Debug] : tempture_integer : "<< tempture;
         int _return_tempture_ = controler->set_device_tempture (pid.toInt (), tempture);
         if( _return_tempture_ < 0){
 
@@ -308,7 +309,7 @@ int Main_Process::load_panel_obj()
                                       Q_ARG(QVariant, _it_obj_["d_name"].toString ()),                //Device_name_string
                                       Q_ARG(QVariant, _qml_tempture_parameter_),                         //Current_tempture
                                       Q_ARG(QVariant, 0),                         //Setting_tempture
-                                      Q_ARG(QVariant, _it_obj_["d_name"].toString ()));
+                                      Q_ARG(QVariant, _it_obj_["d_pid"].toString ()));
 
             //디바이스 메인 패널오브젝트에 add_device() 자바스크립트 파라미터를 input하고 실행함
 
