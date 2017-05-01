@@ -1,8 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Controls.Universal 2.1
 import QtQuick.Layouts 1.0
+import QtQuick.Controls.Material 2.1
 
 Rectangle_Design_Form {
 
@@ -17,12 +16,14 @@ Rectangle_Design_Form {
     signal add_raspberry_Device(string d_name, int gpio, string d_type)
 
     RowLayout {
-        x: 142
-        y: 402
+        x: 23
+        y: 212
 
         Label {
             id: type_label
             text: qsTr("Device_Type")
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
             Layout.preferredHeight: 62
             Layout.preferredWidth: 129
             font.pointSize: 20
@@ -41,50 +42,10 @@ Rectangle_Design_Form {
         }
     }
 
-    SpinBox {
-        id: gpio_field
-        x: 277
-        y: 481
-        width: 167
-        height: 57
-    }
-
-    Label {
-        id: type_label1
-        x: 142
-        y: 481
-        text: qsTr("GPIO")
-        Layout.preferredHeight: 62
-        Layout.preferredWidth: 129
-        font.pointSize: 20
-    }
-
-    Label {
-        id: type_label3
-        x: 142
-        y: 317
-        text: qsTr("Name")
-        Layout.preferredHeight: 62
-        Layout.preferredWidth: 129
-        font.pointSize: 20
-    }
-
-    TextField {
-        id: device_name_field
-        x: 277
-        y: 317
-        width: 341
-        height: 62
-        text: qsTr("Test_Moter")
-        onActiveFocusChanged: {
-            text: qsTr("")
-        }
-    }
-
     Button {
         id: add_device_button
-        x: 461
-        y: 759
+        x: 63
+        y: 531
         width: 236
         height: 64
         text: qsTr("Add")
@@ -101,12 +62,14 @@ Rectangle_Design_Form {
         id: rectangle
         x: 0
         y: 0
-        width: 186
-        height: 109
+        width: 112
+        height: 62
         color: "#ff8000"
 
         MouseArea{
             id: back_to_menu
+            x: 0
+            y: 0
             width: parent.width
             height: parent.height
         }
@@ -114,13 +77,62 @@ Rectangle_Design_Form {
 
     Label {
         id: states_label
-        x: 142
-        y: 589
-        width: 476
+        x: 30
+        y: 389
+        width: 301
         height: 46
         text: qsTr("")
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
+    }
+
+    GridLayout {
+        x: 23
+        y: 157
+        rows: 1
+        columns: 2
+
+        Label {
+            id: type_label3
+            text: qsTr("Name")
+            Layout.preferredHeight: 29
+            Layout.preferredWidth: 60
+            font.pointSize: 20
+        }
+
+        TextField {
+            id: device_name_field
+            text: qsTr("Test_Moter")
+            Layout.preferredHeight: 43
+            Layout.preferredWidth: 219
+            onActiveFocusChanged: {
+                text: qsTr("")
+            }
+        }
+    }
+
+    GridLayout {
+    }
+
+    RowLayout {
+        x: 30
+        y: 297
+
+        Label {
+            id: type_label1
+            text: qsTr("GPIO")
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            Layout.preferredHeight: 62
+            Layout.preferredWidth: 129
+            font.pointSize: 20
+        }
+
+        SpinBox {
+            id: gpio_field
+            Layout.preferredHeight: 57
+            Layout.preferredWidth: 167
+        }
     }
 
 }

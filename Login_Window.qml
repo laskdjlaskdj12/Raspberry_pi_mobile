@@ -1,7 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
-import QtQuick.Controls.Styles 1.0
+//import QtQuick.Controls.Styles 1.0
 import QtQuick.Controls.Material 2.1
 
 Rectangle_Design_Form {
@@ -14,21 +14,17 @@ Rectangle_Design_Form {
 
     Item{
 
-
-        width: 720
-        height: 960
         id: login_main_window
-        x: 0
-        y: 0
 
 
         Button{
             id: login_botton
             x: 102
-            y: 832
-            width: 516
+            y: 479
+            width: 322
             height: 76
             text: "LOGIN"
+            anchors.horizontalCenterOffset: 187
             anchors.horizontalCenter: parent.horizontalCenter
             checkable: false
             highlighted: true
@@ -44,10 +40,11 @@ Rectangle_Design_Form {
         TextField {
             id: login_title
             x: 169
-            y: 21
-            width: 383
+            y: 8
+            width: 357
             height: 186
             text: qsTr("BOILER")
+            anchors.horizontalCenterOffset: 187
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
             font.pointSize: 50
@@ -64,10 +61,10 @@ Rectangle_Design_Form {
 
         Label {
             id: id_label
-            x: 134
-            y: 517
-            width: 90
-            height: 53
+            x: 8
+            y: 281
+            width: 63
+            height: 32
             text: qsTr("IP")
             font.pointSize: 30
             Layout.preferredHeight: 66
@@ -78,10 +75,10 @@ Rectangle_Design_Form {
 
         TextField {
             id: login_ip_editor
-            x: 238
-            y: 517
-            width: 330
-            height: 60
+            x: 74
+            y: 281
+            width: 274
+            height: 42
             text: "127.0.0.1"
             Layout.columnSpan: 2
             Layout.preferredHeight: 66
@@ -94,10 +91,10 @@ Rectangle_Design_Form {
             objectName: "error_edit"
 
             x: 115
-            y: 608
-            width: 460
-            height: 58
-            anchors.horizontalCenterOffset: -15
+            y: 334
+            width: 356
+            height: 40
+            anchors.horizontalCenterOffset: 187
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter

@@ -3,12 +3,10 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.2
 import QtQml.Models 2.2
-import QtQuick.Controls.Material 2.1
+//import QtQuick.Controls.Material 2.1
 
 Rectangle_Design_Form {
     id: main_indicator_panel
-    width: 720
-    height: 960
     state: "Main_state"
 
     property alias account_button: account_rectangle_button
@@ -74,183 +72,192 @@ Rectangle_Design_Form {
 
     //==================== 디바이스 패널 리스트 뷰 ====================
     //메인컨트롤러는 리스트 형태 그리고 리스트를 누르면 해당 위치별로 등록된 컨트롤러가 나타나서 조절을 가능하게함
-    Item{
-        id: boiler_main_panel
-        objectName: "boiler_main_panel"
-        width: parent.width
-        height: parent.height
-        Material.theme: Material.Dark
-        Material.accent: Material.Purple
+
+    //id: boiler_main_panel
+    x: 0
+    y: 0
+    width: 375
+    height: 667
+    objectName: "boiler_main_panel"
+    //Material.theme: Material.Dark
+    //Material.accent: Material.Purple
+
+    Rectangle {
+        id: menu_bar
+        x: 0
+        y: 0
+        width: 375
+        height: 70
+        color: "#ffffff"
+        radius: 4
+        //Material.accent: Material.Purple
 
         Rectangle {
-            id: menu_bar
-            x: 0
-            y: 0
-            width: 720
-            height: 111
+            id: account_rectangle
+            x: 259
+            y: 8
+            width: 108
+            height: 113
             color: "#ffffff"
-            radius: 4
-            Material.accent: Material.Purple
-
-            Rectangle {
-                id: account_rectangle
-                x: 574
-                y: 41
-                width: 138
-                height: 131
-                color: "#ffffff"
-                radius: 10
-                MouseArea{
-                    id: account_rectangle_button
-                    width: 138
-                    height: 131
-                }
-            }
-
-            Rectangle {
-                id: side_menu_button
+            radius: 10
+            MouseArea{
+                id: account_rectangle_button
                 x: 0
-                y: 2
-                width: 158
-                height: 109
-                color: "Orange"
-                MouseArea{
-                    id: side_menu_button_area
-                    width: parent.width
-                    height: parent.height
-                }
+                y: 0
+                width: parent.width
+                height: parent.height
             }
-
-
         }
 
-        //==================== 디바이스 패널 리스트 뷰 ====================
-        ListView {
-            id: listView
-            objectName: "listView"
-            x: 8
-            y: 178
-            width: 700
-            height: 700
-            delegate: Dial_List_Delicate{
-                signal change_tempture_signal(int value, string device_pid, int panel_index)
+        Rectangle {
+            id: side_menu_button
+            x: 0
+            y: 0
+            width: 123
+            height: 70
+            color: "Orange"
+            MouseArea{
+                id: side_menu_button_area
+                x: 0
+                y: 0
+                width: parent.width
+                height: parent.height
+            }
+        }
 
-                function change_dial_tempture( value,  device_pid,  panel_index){
 
-                    console.debug(qsTr("change tempture :"), value, qsTr(" device_pid : "), device_pid, qsTr(" panel_index : "), panel_index);
-                    send_device_adjust_tempture(value, device_pid, panel_index);
-                }
+    }
 
-                id: dial_delegate
-                objectName: "dial_delegate"
-                //==================== 디바이스 패널 remove ====================
-                Rectangle {
-                    id: remove_panel
-                    x: 583
-                    y: 60
-                    width: 109
-                    height: 27
-                    color: "#ff8000"
+    //==================== 디바이스 패널 리스트 뷰 ====================
+    ListView {
+        id: listView
+        objectName: "listView"
+        x: 17
+        y: 154
+        width: 342
+        height: 489
+        delegate: Dial_List_Delicate{
+            signal change_tempture_signal(int value, string device_pid, int panel_index)
 
-                    MouseArea{
+            function change_dial_tempture( value,  device_pid,  panel_index){
 
-                        id: remove_panel_button
-                        width: parent.width
-                        height: parent.height
-                        onClicked: {
+                console.debug(qsTr("change tempture :"), value, qsTr(" device_pid : "), device_pid, qsTr(" panel_index : "), panel_index);
+                send_device_adjust_tempture(value, device_pid, panel_index);
+            }
 
-                            console.debug(qsTr("Remove index : "), panel_index)
-                            remove_device_panel( panel_index )
-                            main_indicator_panel.remove_device_pid( device_pid )
-                        }
+            id: dial_delegate
+            objectName: "dial_delegate"
+            //==================== 디바이스 패널 remove ====================
+            Rectangle {
+                id: remove_panel
+                x: 583
+                y: 60
+                width: 109
+                height: 27
+                color: "#ff8000"
+
+                MouseArea{
+
+                    id: remove_panel_button
+                    width: parent.width
+                    height: parent.height
+                    onClicked: {
+
+                        console.debug(qsTr("Remove index : "), panel_index)
+                        remove_device_panel( panel_index )
+                        main_indicator_panel.remove_device_pid( device_pid )
                     }
                 }
             }
+        }
 
-            model: dial_list
+        interactive: true
+        model: dial_list
+        clip: true
 
 
-            //리스트 뷰의 하이라이트
-            highlight: Rectangle{
-                width: parent.width
-                color: "lightgray"
-
-            }
+        //리스트 뷰의 하이라이트
+        highlight: Rectangle{
+            width: parent.width
+            color: "lightgray"
 
         }
 
+    }
 
-        //==================== 사이드 바 menu ====================
-        //사이드 메뉴로는 컴포넌트 자동 업데이트나 아니면 로그인 상태 등등을 표시함
 
-        Rectangle{
-            id: side_menu
-            x: -246
+    //==================== 사이드 바 menu ====================
+    //사이드 메뉴로는 컴포넌트 자동 업데이트나 아니면 로그인 상태 등등을 표시함
+
+    Rectangle{
+        id: side_menu
+        x: -121
+        y: 0
+        width: 123
+        height: parent.height
+        //Material.background: Material.Red
+        visible: true
+
+        Rectangle {
+            id: menu_back_button
             y: 0
-            width: parent.width/3
-            height: parent.height
-            Material.background: Material.Red
-            visible: true
+            anchors.left: parent.left
+            anchors.right: parent.right
+            width: 200
+            height: 70
+            color: "Orange"
+            anchors.leftMargin: 0
+            opacity: 0
+            MouseArea{
+                id:menu_back_button_mouse
+                x: parent.x
+                y: parent.y
 
-            Rectangle {
-                id: menu_back_button
-                y: 0
-                anchors.left: parent.left
-                anchors.right: parent.right
-                width: 200
-                height: 200
-                color: "Orange"
-                opacity: 0
-                MouseArea{
-                    id:menu_back_button_mouse
-                    x: parent.x
-                    y: parent.y
-
-                    width: parent.width
-                    height: parent.height
-                }
-            }
-
-        }
-
-        //==================== 디바이스 add ====================
-        RowLayout {
-            x: 273
-            y: 124
-
-            Button {
-                id: add_button
-                text: qsTr("Add")
-                onClicked: {
-
-                    main_indicator_panel.state = "Add_Device_state"
-
-                    //디바이스들 추가시 실험할때 사용함
-                    //add_device(dial_list.count, dial_list.count, 0, 0, "12321")
-
-                }
-
-            }
-
-            Button {
-                id: remove_button
-                text: qsTr("Remove")
-                onClicked: {
-                    dial_list.remove(listView.currentIndex)
-                }
+                width: parent.width
+                height: parent.height
             }
         }
 
-        Label {
-            id: err_label
-            x: 23
-            y: 130
-            width: 230
-            height: 37
-            text: qsTr("")
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
+    }
+
+    //==================== 디바이스 add ====================
+    RowLayout {
+        id: rowLayout
+        x: 17
+        y: 100
+
+
+        Button {
+            id: remove_button
+            text: qsTr("Remove")
+            onClicked: {
+                dial_list.remove(listView.currentIndex)
+            }
         }
+        Button {
+            id: add_button
+            text: qsTr("Add")
+            onClicked: {
+
+                //main_indicator_panel.state = "Add_Device_state"
+
+                //디바이스들 추가시 실험할때 사용함
+                add_device(dial_list.count, dial_list.count, 0, 0, "12321")
+
+            }
+
+        }
+    }
+
+    Label {
+        id: err_label
+        x: 8
+        y: 65
+        width: 230
+        height: 37
+        text: qsTr("")
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
     }
     //==================== 디바이스 패널 리스트 모델 ====================
     Dial_List_Model{
@@ -262,7 +269,7 @@ Rectangle_Design_Form {
     Device_Add_Page {
         id: device_Add_Page
         objectName: "device_add_panel_obj"
-        x: 720
+        x: 375
         y: 0
     }
 
@@ -307,6 +314,11 @@ Rectangle_Design_Form {
                 target: account_rectangle_button
                 width: 138
                 height: 131
+            }
+
+            PropertyChanges {
+                target: rowLayout
+                visible: false
             }
         },
 

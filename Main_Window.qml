@@ -1,7 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
-import QtQuick.Window 2.2
+//import QtQuick.Window 2.2
 import QtQuick.Controls.Material 2.1
 
 Item {
@@ -17,10 +17,7 @@ Item {
         main_window.state = "Main_Panel_Page"
     }
 
-
     id: main_window
-    width: 720
-    height: 960
 
     state: "Login_Page"
 
@@ -29,10 +26,6 @@ Item {
         objectName: "login_window_obj"
         x: 0
         y: 0
-        width: 720
-        height: 960
-        Material.theme: Material.Dark
-        Material.accent: Material.Pink
     }
     Loding_Screen{
         id: loading_screen
@@ -49,10 +42,6 @@ Item {
         visible: true
         objectName: "main_indicator_panel_obj"
     }
-    Device_Add_Page{
-        id: device_add_panel
-        objectName: "device_add_panel_obj"
-    }
 
     states: [
         State {
@@ -66,6 +55,8 @@ Item {
 
             PropertyChanges{
                 target: main_indicator_panel
+                x: 0
+                y: 0
                 visible: false
             }
 
@@ -74,11 +65,16 @@ Item {
                 x: main_window.width
                 y: 0
             }
+            PropertyChanges {
+                target: login_window
+                x: 0
+                y: 0
+            }
 
             PropertyChanges {
-                target: device_add_panel
-                x: main_window.width
-                y: 0
+                target: main_window
+                width: 375
+                height: 667
             }
         },
         State {
@@ -99,12 +95,6 @@ Item {
 
             PropertyChanges {
                 target: account_penl
-                x: main_window.width
-                y: 0
-            }
-
-            PropertyChanges {
-                target: device_add_panel
                 x: main_window.width
                 y: 0
             }
@@ -130,38 +120,6 @@ Item {
                 x: main_window.width
                 y: 0
             }
-
-            PropertyChanges {
-                target: device_add_panel
-                x: main_window.width
-                y: 0
-            }
-        },
-        State {
-            name: "Boiler_Add_Page"
-            PropertyChanges {
-                target: loading_screen
-                x: main_window.width
-                y: 0
-            }
-
-            PropertyChanges{
-                target: main_indicator_panel
-                x: main_window.width
-                y: 0
-            }
-
-            PropertyChanges {
-                target: account_penl
-                x: main_window.width
-                y: 0
-            }
-
-            PropertyChanges {
-                target: device_add_panel
-                x: 0
-                y: 0
-            }
         },
 
         State {
@@ -185,11 +143,6 @@ Item {
                 y: 0
             }
 
-            PropertyChanges {
-                target: device_add_panel
-                x: main_window.width
-                y: 0
-            }
             PropertyChanges {
                 target: main_indicator_panel.side_menu
                 visible: false
@@ -254,32 +207,6 @@ Item {
         },
 
 
-        //this is Main_Panel_Page to Add_Device_Page
-        Transition {
-            from: "Main_Panel_Page"
-            to: "Boiler_Add_Page"
-
-
-            NumberAnimation {
-                target: device_add_panel
-                property: "x"
-                duration: 200
-                easing.type: Easing.OutQuad
-            }
-        },Transition {
-            from: "Boiler_Add_Page"
-            to: "Main_Panel_Page"
-
-
-            NumberAnimation {
-                target: device_add_panel
-                property: "x"
-                duration: 200
-                easing.type: Easing.OutQuad
-            }
-        },
-
-
         //this is MainPanel_Page to Account_penl page
         Transition {
             from: "Main_Panel_Page"
@@ -308,7 +235,7 @@ Item {
 
 
 
-/*    Connections{
+    Connections{
         target: login_window.login_botton
         onClicked: main_window.state = "Login_Loading_Page"
     } Connections{
@@ -320,7 +247,7 @@ Item {
     } Connections{
         target: account_penl.to_menu_back_button
         onClicked: main_window.state = "Main_Panel_Page"
-    }*/
+    }
 }
 
 

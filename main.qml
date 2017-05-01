@@ -6,13 +6,13 @@ import QtQuick.Window 2.2
 
 ApplicationWindow {
     visible: true
-    width: 720
-    height: 960
+    width: 375
+    height: 667
 
     Main_Window{
         id: main_window
         objectName: "main_window_obj"
-        width: 720
-        height: 960
+        width: parent.width
+        height: parent.height
     }
 }
