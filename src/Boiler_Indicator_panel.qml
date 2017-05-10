@@ -191,9 +191,9 @@ Rectangle_Design_Form {
 
     Rectangle{
         id: side_menu
-        x: -121
+        x: -200
         y: 0
-        width: 123
+        width: 200
         height: parent.height
         //Material.background: Material.Red
         visible: true
@@ -216,6 +216,17 @@ Rectangle_Design_Form {
                 width: parent.width
                 height: parent.height
             }
+        }
+
+        //현재 접속 기록으로 남겨진 서버 접속 상태를 리스트 로 표시
+        ListView{
+            id: server_list_view
+            x: 0
+            y: 115
+
+            width: 200
+            height: 532
+
         }
 
     }
@@ -289,7 +300,7 @@ Rectangle_Design_Form {
             PropertyChanges {
                 target: menu_back_button
                 width: 240
-                height: 111
+                height: 66
             }
 
         },
@@ -307,7 +318,7 @@ Rectangle_Design_Form {
             PropertyChanges {
                 target: menu_back_button
                 width: 240
-                height: 111
+                height: 71
             }
 
             PropertyChanges {
