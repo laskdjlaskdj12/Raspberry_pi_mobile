@@ -2,17 +2,17 @@ QT += qml quick widgets sql network testlib
 
 CONFIG += c++11
 
-SOURCES += main.cpp \
-    sidebar_interface.cpp \
-    tcp_connection.cpp \
-    ip_login_section.cpp \
-    boiler_controler_exception.cpp \
-    adjust_device_contrler.cpp \
-    qt_json_socket_lib.cpp \
-    unit_test.cpp \
-    main_process.cpp
+SOURCES += src/main.cpp \
+    src/sidebar_interface.cpp \
+    src/tcp_connection.cpp \
+    src/ip_login_section.cpp \
+    src/boiler_controler_exception.cpp \
+    src/adjust_device_contrler.cpp \
+    src/qt_json_socket_lib.cpp \
+    src/unit_test.cpp \
+    src/main_process.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += src/qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -37,13 +37,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    qt_json_socket_lib_global.h \
-    qt_json_socket_lib.h \
-    sidebar_interface.h \
-    tcp_connection.h \
-    ip_login_section.h \
-    boiler_controler_exception.h \
-    adjust_device_contrler.h \
-    main_process.h
+    src/qt_json_socket_lib_global.h \
+    src/qt_json_socket_lib.h \
+    src/sidebar_interface.h \
+    src/tcp_connection.h \
+    src/ip_login_section.h \
+    src/boiler_controler_exception.h \
+    src/adjust_device_contrler.h \
+    src/main_process.h
 
 STATECHARTS +=

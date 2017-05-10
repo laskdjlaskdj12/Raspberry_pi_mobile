@@ -235,7 +235,7 @@ Item {
 
 
 
-    Connections{
+    /*Connections{
         target: login_window.login_botton
         onClicked: main_window.state = "Login_Loading_Page"
     } Connections{
@@ -247,7 +247,7 @@ Item {
     } Connections{
         target: account_penl.to_menu_back_button
         onClicked: main_window.state = "Main_Panel_Page"
-    }
+    }*/
 }
 
 

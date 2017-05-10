@@ -239,10 +239,10 @@ Rectangle_Design_Form {
             text: qsTr("Add")
             onClicked: {
 
-                //main_indicator_panel.state = "Add_Device_state"
+                main_indicator_panel.state = "Add_Device_state"
 
                 //디바이스들 추가시 실험할때 사용함
-                add_device(dial_list.count, dial_list.count, 0, 0, "12321")
+                //add_device(dial_list.count, dial_list.count, 0, 0, "12321")
 
             }
 

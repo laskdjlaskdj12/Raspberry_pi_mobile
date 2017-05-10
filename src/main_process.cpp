@@ -60,10 +60,11 @@ int Main_Process::init_main_object ()
 
         panel_menu_obj = main_indicator_panel_obj->findChild<QObject*>("boiler_main_panel");
 
-        list_view_delegate_obj = panel_menu_obj->findChild<QObject*>("listView");
+        //list_view_delegate_obj = panel_menu_obj->findChild<QObject*>("listView");
 
-        QQmlComponent* temp_listview_delicate = qvariant_cast<QQmlComponent *>(list_view_delegate_obj->property ("delegate"));
-        dial_delegate_obj = temp_listview_delicate->findChild<QObject*>("dial_delegate");
+        ///QQmlComponent* temp_listview_delicate = qvariant_cast<QQmlComponent *>(list_view_delegate_obj->property ("delegate"));
+
+        //dial_delegate_obj = temp_listview_delicate->findChild<QObject*>("dial_delegate");
 
         return 0;
     }
