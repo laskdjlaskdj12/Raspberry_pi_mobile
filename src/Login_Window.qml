@@ -47,6 +47,7 @@ Rectangle_Design_Form {
             anchors.horizontalCenterOffset: 187
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
+            readOnly: true
             font.pointSize: 50
         }
 

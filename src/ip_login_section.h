@@ -1,6 +1,7 @@
 #ifndef IP_LOGIN_SECTION_H
 #define IP_LOGIN_SECTION_H
 
+#include <QFile>
 #include <QObject>
 #include "qt_json_socket_lib.h"
 #include <QJsonDocument>
@@ -17,6 +18,8 @@ public:
     ~Ip_Login_Section();
 
     QString get_ip();
+    QString get_last_ip();
+    QList<QString> get_ip_cache_list();
 
     void set_ip(QString ip);
 
@@ -25,6 +28,9 @@ public:
 
 private:
     QJsonObject send_connect_Json_Synctes();
+
+    void save_server_cache();
+    void load_server_cache();
 
 public slots:
     void check_ip_connect(QString ip);
