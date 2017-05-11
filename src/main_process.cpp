@@ -66,6 +66,8 @@ int Main_Process::init_main_object ()
 
         //dial_delegate_obj = temp_listview_delicate->findChild<QObject*>("dial_delegate");
 
+        //states 을 Login_Page로 변경함
+        main_window_obj -> setProperty ("state", "Login_Page");
         return 0;
     }
     catch(QString& e){
@@ -122,17 +124,24 @@ void Main_Process::ip_connect_to_raspberry(QString ip)
      * 6. 만약 디바이스 목록 리턴값이 fail일 경우 Login_page로 변경후 에러메세지를 출력함
      * 7. JsonObject로 리턴시 Device_List에 저장
      * 8. Device_List 에서 모든 디바이스들을 db에 저장
+     *
+     *
+     * ========= 추가 사항 ==========
+     * 1. ip를 최대 5개까지 저장할수있도록 함
+     *
      * */
 
         //states 를 loadingscreen으로 변경
         main_window_obj -> setProperty ("state", "Login_Loading_Page");
 
+
+
         //받은 ip을 ip_login 와 controler에 각각 세팅함
         ip_login->set_ip (ip);
         controler->set_ip (ip);
 
+        QThread::sleep (2);
         if (ip_login->login_to_device () < 0){
-
 
             main_window_obj -> setProperty ("state", "Login_Page");
 
@@ -148,7 +157,11 @@ void Main_Process::ip_connect_to_raspberry(QString ip)
             throw QString(" recv device_panel_obj");
         }
 
-        //ip연결이 성공시 main_indicator로 state를 변경함
+        // tabbar에 추가할 ip 리스트들을 function문으로 추가
+
+
+        // main_indicator로 state를 변경함
+        main_window_obj -> setProperty ("state", "Login_Loading_Page");
         main_window_obj -> setProperty ("state", "Main_Panel_Page");
 
     }catch(QSqlError& e){

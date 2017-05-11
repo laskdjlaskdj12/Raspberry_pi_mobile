@@ -14,5 +14,6 @@
         <file>Device_Add_Page.qml</file>
         <file>Rectangle_Design_Form.qml</file>
         <file>Server_cache_list_delicate.qml</file>
+        <file>Server_cache_list_model.qml</file>
     </qresource>
 </RCC>

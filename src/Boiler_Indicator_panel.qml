@@ -44,8 +44,8 @@ Rectangle_Design_Form {
 
                          })
 
-        //현재 패널창안에 있는 디바이스패널들의 인덱스를 전부 재설정
-        var penl_size = dial_list.count
+        //패널 인덱스 재설정
+        var penl_size = dial_list.count;
         for(var i = 0; i < penl_size; i++){
 
             dial_list.get(i).panel_index = i
@@ -57,11 +57,59 @@ Rectangle_Design_Form {
 
         dial_list.remove(Panel_index)
 
-        //현재 패널창안에 있는 디바이스패널들의 인덱스를 전부 재설정
-        var penl_size = dial_list.count
+        //패널 인덱스 재설정
+        var penl_size = dial_list.count;
         for(var i = 0; i < penl_size; i++){
 
             dial_list.get(i).panel_index = i
+        }
+    }
+
+    //tabbar 캐시 리스트 패널 추가
+    function add_server_cache_list_panel (server_ip, is_alive){
+
+        var color;
+        if ( is_alive == false){
+            color = "Red"
+        }
+        else {
+            color = "Green"
+        }
+
+        tab_bar_list_model.append({
+                                      panel_ip            : server_ip,
+                                      panel_states_color  : color,
+                                      panel_index_states  : tab_bar_list_model.count
+                                  })
+
+        //해당 인덱스를 찾아서 states 색깔을 바꿈
+        var penl_size = tab_bar_list_model.count;
+        for(var i = 0; i < penl_size; i++){
+
+            if ( dial_list.get(i).panel_index == panel_ip){
+
+                dial_list.get(i).panel_states_color = color;
+
+            }
+
+        }
+    }
+
+    //tabbar 에서 서버 상태가 변경됬을경우
+    function change_server_states( is_active, ip){
+
+        var color;
+        if ( is_alive == false){
+            color = "Red"
+        }
+        else {
+            color = "Green"
+        }
+
+        for(var i = 0; i < tab_bar_list_model.count; i++){
+            if ( tab_bar_list_model.get(i).panel_ip == ip){
+
+            }
         }
     }
 
@@ -70,6 +118,8 @@ Rectangle_Design_Form {
     signal remove_device_pid(string device_pid);
     signal send_device_adjust_tempture(int value, string pid, int index);
 
+    //서버에서 캐시 리스트를 클릭을 했을시 이벤트가 발생되서 해당 서버가 살아있는지를 체크하게하는것
+    signal server_cache_list_click_signal(string ip)
     //==================== 디바이스 패널 리스트 뷰 ====================
     //메인컨트롤러는 리스트 형태 그리고 리스트를 누르면 해당 위치별로 등록된 컨트롤러가 나타나서 조절을 가능하게함
 
@@ -116,6 +166,7 @@ Rectangle_Design_Form {
             width: 123
             height: 70
             color: "Orange"
+
             MouseArea{
                 id: side_menu_button_area
                 x: 0
@@ -137,6 +188,7 @@ Rectangle_Design_Form {
         width: 342
         height: 489
         delegate: Dial_List_Delicate{
+
             signal change_tempture_signal(int value, string device_pid, int panel_index)
 
             function change_dial_tempture( value,  device_pid,  panel_index){
@@ -190,6 +242,7 @@ Rectangle_Design_Form {
     //사이드 메뉴로는 컴포넌트 자동 업데이트나 아니면 로그인 상태 등등을 표시함
 
     Rectangle{
+
         id: side_menu
         x: -200
         y: 0
@@ -199,6 +252,7 @@ Rectangle_Design_Form {
         visible: true
 
         Rectangle {
+
             id: menu_back_button
             y: 0
             anchors.left: parent.left
@@ -208,6 +262,7 @@ Rectangle_Design_Form {
             color: "Orange"
             anchors.leftMargin: 0
             opacity: 0
+
             MouseArea{
                 id:menu_back_button_mouse
                 x: parent.x
@@ -218,17 +273,19 @@ Rectangle_Design_Form {
             }
         }
 
-        //현재 접속 기록으로 남겨진 서버 접속 상태를 리스트 로 표시
+        //탭바의 리스트뷰
+        //접속기록을 리스트 뷰하여 저장함
         ListView{
-            id: server_list_view
+
+            id: tab_bar_list_view
             x: 0
             y: 115
-
             width: 200
             height: 532
-
+            model: tab_bar_list_model
+            delegate: Server_cache_list_delicate{}
+            clip: true
         }
-
     }
 
     //==================== 디바이스 add ====================
@@ -282,6 +339,11 @@ Rectangle_Design_Form {
         objectName: "device_add_panel_obj"
         x: 375
         y: 0
+    }
+    //==================== TabBar 의 접속 서버 기록 캐시 ====================
+    Server_cache_list_model{
+        id: tab_bar_list_model
+
     }
 
     //==================== 페이지 state ====================
@@ -374,6 +436,7 @@ Rectangle_Design_Form {
             }
 
         },
+
         Transition {
             from: "Main_state"
             to: "Add_Device_state"

@@ -7,6 +7,9 @@ Ip_Login_Section::Ip_Login_Section(QObject *parent) : QObject(parent)
     lib->set_recv_timeout (3000);
     lib->set_send_timeout (3000);
     lib->set_connect_timeout (3000);
+
+    //캐시 리스트 불러오기
+
 }
 
 Ip_Login_Section::~Ip_Login_Section()
@@ -14,6 +17,9 @@ Ip_Login_Section::~Ip_Login_Section()
     if (lib->get_socket ()->isOpen ()){  lib->get_socket ()->close ();}
 
     lib->deleteLater ();
+
+    //캐시리스트 저장
+
 }
 
 QString Ip_Login_Section::get_ip(){    return ip_;}
@@ -41,7 +47,8 @@ int Ip_Login_Section::login_to_device()
 
         lib->disconnect_server ();
 
-        return -1;
+        ip_cache_list.append (ip_);
+        return 0;
 
     }catch(Boiler_Controler_Exception& e){
 

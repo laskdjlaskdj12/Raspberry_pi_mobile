@@ -2,7 +2,7 @@
 #define IP_LOGIN_SECTION_H
 
 #include <QObject>
-#include <qt_json_socket_lib.h>
+#include "qt_json_socket_lib.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -31,7 +31,6 @@ public slots:
     void timeout_to_device();
 
 signals:
-
     void send_timeout();
 
 private:
@@ -39,6 +38,9 @@ private:
     Qt_Json_Socket_Lib* lib;
 
     bool is_connect;
+
+    QList<QString> ip_cache_list;
+
 
 
 };

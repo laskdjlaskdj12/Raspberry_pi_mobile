@@ -1,8 +1,8 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
-//import QtQuick.Window 2.2
-import QtQuick.Controls.Material 2.1
+import QtQuick.Window 2.2
+//import QtQuick.Controls.Material 2.1
 
 Item {
 
@@ -18,8 +18,6 @@ Item {
     }
 
     id: main_window
-
-    state: "Login_Page"
 
     Login_Window{
         id: login_window
@@ -70,13 +68,8 @@ Item {
                 x: 0
                 y: 0
             }
-
-            PropertyChanges {
-                target: main_window
-                width: 375
-                height: 667
-            }
         },
+
         State {
             name: "Login_Loading_Page"
 
@@ -100,6 +93,7 @@ Item {
             }
 
         },
+
         State {
             name: "Main_Panel_Page"
 
@@ -151,7 +145,7 @@ Item {
         }
     ]
 
- transitions: [
+    transitions: [
 
         //this is Login_Page to Login_Loading_Page
         Transition {
@@ -193,7 +187,9 @@ Item {
                 duration: 200
                 easing.type: Easing.OutQuad
             }
-        },Transition {
+        },
+
+        Transition {
             from: "Main_Panel_Page"
             to: "Login_Loading_Page"
 

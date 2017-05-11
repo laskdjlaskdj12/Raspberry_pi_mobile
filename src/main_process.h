@@ -13,6 +13,7 @@
 #include <QJsonValue>
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QThread>
 
 #include "ip_login_section.h"
 #include "adjust_device_contrler.h"
