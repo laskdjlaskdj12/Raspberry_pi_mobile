@@ -1,7 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.0
-import QtQuick.Controls.Material 2.1
+//import QtQuick.Controls.Material 2.1
 
 
 //Dial 리스트 모델에서는 panel_의 naming convention이 들어감
@@ -26,7 +26,7 @@ Rectangle{
     //width와 height는 서로 다른것
     width: 342
     height: 280
-    color: "#3F51B5"
+    color: "#ffffff"
     Item{
 
         ProgressBar {

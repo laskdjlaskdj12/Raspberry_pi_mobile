@@ -9,6 +9,7 @@ Rectangle_Design_Form {
     property alias to_menu_back_button: account_to_menu_button
 
     Item{
+
         id: account_info_panel
         //Material.theme: Material.Dark
         Rectangle {

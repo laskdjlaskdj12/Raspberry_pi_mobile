@@ -44,8 +44,8 @@ Rectangle_Design_Form {
 
                          })
 
-        //현재 패널창안에 있는 디바이스패널들의 인덱스를 전부 재설정
-        var penl_size = dial_list.count
+        //패널 인덱스 재설정
+        var penl_size = dial_list.count;
         for(var i = 0; i < penl_size; i++){
 
             dial_list.get(i).panel_index = i
@@ -57,11 +57,54 @@ Rectangle_Design_Form {
 
         dial_list.remove(Panel_index)
 
-        //현재 패널창안에 있는 디바이스패널들의 인덱스를 전부 재설정
-        var penl_size = dial_list.count
+        //패널 인덱스 재설정
+        var penl_size = dial_list.count;
         for(var i = 0; i < penl_size; i++){
 
             dial_list.get(i).panel_index = i
+        }
+    }
+
+    //tabbar 캐시 리스트 패널 추가
+    function add_server_cache_list_panel (server_ip, is_alive){
+
+        var color;
+        if ( is_alive == false){
+            color = "Red"
+        }
+        else {
+            color = "Green"
+        }
+
+        tab_bar_list_model.append({
+                                      panel_ip            : server_ip,
+                                      panel_states_color  : color,
+                                      panel_index_states  : tab_bar_list_model.count
+                                  })
+
+        //해당 인덱스를 찾아서 states 색깔을 바꿈
+        var penl_size = tab_bar_list_model.count;
+        for(var i = 0; i < penl_size; i++){
+
+            tab_bar_list_model.get(i).panel_index = i;
+        }
+    }
+
+    //tabbar 에서 서버 상태가 변경됬을경우
+    function change_server_states( is_active, ip){
+
+        var color;
+        if ( is_active == false){
+            color = "Red"
+        }
+        else {
+            color = "Green"
+        }
+
+        for(var i = 0; i < tab_bar_list_model.count; i++){
+            if ( tab_bar_list_model.get(i).panel_ip == ip){
+                tab_bar_list_model.get(i).panel_states_color = color;
+            }
         }
     }
 
@@ -70,6 +113,8 @@ Rectangle_Design_Form {
     signal remove_device_pid(string device_pid);
     signal send_device_adjust_tempture(int value, string pid, int index);
 
+    //서버에서 캐시 리스트를 클릭을 했을시 이벤트가 발생되서 해당 서버가 살아있는지를 체크하게하는것
+    signal server_cache_list_click_signal(string ip)
     //==================== 디바이스 패널 리스트 뷰 ====================
     //메인컨트롤러는 리스트 형태 그리고 리스트를 누르면 해당 위치별로 등록된 컨트롤러가 나타나서 조절을 가능하게함
 
@@ -78,6 +123,7 @@ Rectangle_Design_Form {
     y: 0
     width: 375
     height: 667
+    property alias menu_back_button: menu_back_button
     objectName: "boiler_main_panel"
     //Material.theme: Material.Dark
     //Material.accent: Material.Purple
@@ -88,7 +134,7 @@ Rectangle_Design_Form {
         y: 0
         width: 375
         height: 70
-        color: "#ffffff"
+        color: "#34ea9a"
         radius: 4
         //Material.accent: Material.Purple
 
@@ -106,6 +152,17 @@ Rectangle_Design_Form {
                 y: 0
                 width: parent.width
                 height: parent.height
+
+                Image {
+                    id: person_icon
+                     x: 0
+                    y: 0
+                    width: 108
+                    height: 113
+                    smooth: false
+                    clip: true
+                    source: "../icon/People_icon.png"
+                }
             }
         }
 
@@ -113,15 +170,25 @@ Rectangle_Design_Form {
             id: side_menu_button
             x: 0
             y: 0
-            width: 123
+            width: 70
             height: 70
-            color: "Orange"
+            color: "#ffffff"
+
             MouseArea{
                 id: side_menu_button_area
                 x: 0
                 y: 0
                 width: parent.width
                 height: parent.height
+            }
+
+            Image {
+                id: menu_image1
+                x: 0
+                y: 0
+                width: 70
+                height: 70
+                source: "../icon/menu_icon.png"
             }
         }
 
@@ -137,6 +204,7 @@ Rectangle_Design_Form {
         width: 342
         height: 489
         delegate: Dial_List_Delicate{
+
             signal change_tempture_signal(int value, string device_pid, int panel_index)
 
             function change_dial_tempture( value,  device_pid,  panel_index){
@@ -190,6 +258,7 @@ Rectangle_Design_Form {
     //사이드 메뉴로는 컴포넌트 자동 업데이트나 아니면 로그인 상태 등등을 표시함
 
     Rectangle{
+
         id: side_menu
         x: -200
         y: 0
@@ -198,16 +267,17 @@ Rectangle_Design_Form {
         //Material.background: Material.Red
         visible: true
 
+
+
         Rectangle {
+
             id: menu_back_button
+            x: 0
             y: 0
-            anchors.left: parent.left
-            anchors.right: parent.right
-            width: 200
-            height: 70
+            width: 117
+            height: 68
             color: "Orange"
-            anchors.leftMargin: 0
-            opacity: 0
+
             MouseArea{
                 id:menu_back_button_mouse
                 x: parent.x
@@ -216,19 +286,74 @@ Rectangle_Design_Form {
                 width: parent.width
                 height: parent.height
             }
+
+            Image {
+                id: menu_image
+                x: 0
+                y: 0
+                width: 118
+                height: 68
+                source: "../icon/back_icon.png"
+            }
         }
 
-        //현재 접속 기록으로 남겨진 서버 접속 상태를 리스트 로 표시
+        //탭바의 리스트뷰
+        //접속기록을 리스트 뷰하여 저장함
         ListView{
-            id: server_list_view
+
+            id: tab_bar_list_view
             x: 0
-            y: 115
-
+            y: 232
             width: 200
-            height: 532
-
+            height: 409
+            model: tab_bar_list_model
+            delegate: Server_cache_list_delicate{}
+            clip: true
         }
 
+        Rectangle {
+            id: add_tab_button
+            x: 8
+            y: 109
+            width: 184
+            height: 38
+            color: "#ffffff"
+            visible: false
+
+            Text {
+                id: text1
+                x: 57
+                y: 4
+                width: 71
+                height: 30
+                text: qsTr("ADD")
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 20
+            }
+        }
+
+        Rectangle {
+            id: remove_tab_remove
+            x: 8
+            y: 153
+            width: 184
+            height: 38
+            color: "#ffffff"
+            visible: false
+
+            Text {
+                id: text2
+                x: 25
+                y: 3
+                width: 135
+                height: 32
+                text: "REMOVE"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font.pixelSize: 20
+            }
+        }
     }
 
     //==================== 디바이스 add ====================
@@ -241,6 +366,8 @@ Rectangle_Design_Form {
         Button {
             id: remove_button
             text: qsTr("Remove")
+            z: -6
+            smooth: false
             onClicked: {
                 dial_list.remove(listView.currentIndex)
             }
@@ -248,12 +375,16 @@ Rectangle_Design_Form {
         Button {
             id: add_button
             text: qsTr("Add")
+            smooth: false
             onClicked: {
 
                 main_indicator_panel.state = "Add_Device_state"
 
                 //디바이스들 추가시 실험할때 사용함
                 //add_device(dial_list.count, dial_list.count, 0, 0, "12321")
+
+                //디바이스 탭서버 추가시 사용함
+                //add_server_cache_list_panel("127.0.0.1", false);
 
             }
 
@@ -283,6 +414,11 @@ Rectangle_Design_Form {
         x: 375
         y: 0
     }
+    //==================== TabBar 의 접속 서버 기록 캐시 ====================
+    Server_cache_list_model{
+        id: tab_bar_list_model
+
+    }
 
     //==================== 페이지 state ====================
 
@@ -299,8 +435,14 @@ Rectangle_Design_Form {
 
             PropertyChanges {
                 target: menu_back_button
-                width: 240
-                height: 66
+                width: 117
+                height: 68
+            }
+
+            PropertyChanges {
+                target: menu_image1
+                width: 70
+                height: 70
             }
 
         },
@@ -317,8 +459,10 @@ Rectangle_Design_Form {
 
             PropertyChanges {
                 target: menu_back_button
-                width: 240
-                height: 71
+                x: 0
+                y: 0
+                width: 117
+                height: 68
             }
 
             PropertyChanges {
@@ -374,6 +518,7 @@ Rectangle_Design_Form {
             }
 
         },
+
         Transition {
             from: "Main_state"
             to: "Add_Device_state"

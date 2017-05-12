@@ -66,6 +66,18 @@ int Main_Process::init_main_object ()
 
         //dial_delegate_obj = temp_listview_delicate->findChild<QObject*>("dial_delegate");
 
+        //states 을 Login_Page로 변경함
+        main_window_obj -> setProperty ("state", "Login_Page");
+
+        //ip 접속 캐시들을 로드함
+        ip_login->load_cache ();
+
+        qDebug()<<"[Debug] : last_access_ip is " << ip_login->get_last_ip ();
+
+        //ip에디터를 마지막에 편집을 함
+        login_window_obj->setProperty ("ip_editor", ip_login->get_last_ip ());
+
+
         return 0;
     }
     catch(QString& e){
@@ -122,17 +134,24 @@ void Main_Process::ip_connect_to_raspberry(QString ip)
      * 6. 만약 디바이스 목록 리턴값이 fail일 경우 Login_page로 변경후 에러메세지를 출력함
      * 7. JsonObject로 리턴시 Device_List에 저장
      * 8. Device_List 에서 모든 디바이스들을 db에 저장
+     *
+     *
+     * ========= 추가 사항 ==========
+     * 1. ip를 최대 5개까지 저장할수있도록 함
+     *
      * */
 
         //states 를 loadingscreen으로 변경
         main_window_obj -> setProperty ("state", "Login_Loading_Page");
 
+
+
         //받은 ip을 ip_login 와 controler에 각각 세팅함
         ip_login->set_ip (ip);
         controler->set_ip (ip);
 
+        QThread::sleep (2);
         if (ip_login->login_to_device () < 0){
-
 
             main_window_obj -> setProperty ("state", "Login_Page");
 
@@ -148,7 +167,24 @@ void Main_Process::ip_connect_to_raspberry(QString ip)
             throw QString(" recv device_panel_obj");
         }
 
-        //ip연결이 성공시 main_indicator로 state를 변경함
+        ip_login->save_cache ();
+
+        //ip리스트 temp result
+        QVariant temp_result;
+
+        for(uint i = 0; i < ip_login->get_ip_cache_list ().count (); i ++){
+
+            QList<QString>::iterator it = ip_login->get_ip_cache_list ().begin ();
+
+            // tabbar에 추가할 ip 리스트들을 function문으로 추가
+            QMetaObject::invokeMethod(main_indicator_panel_obj,
+                                      "add_server_cache_list_panel",
+                                      Q_RETURN_ARG(QVariant, temp_result),     //return 값은 NULL
+                                      Q_ARG(QVariant, it[i]),                     //ip
+                                      Q_ARG(QVariant, false));                    //서버 접속이 됬는지 확인
+        }
+
+        // main_indicator로 state를 변경함
         main_window_obj -> setProperty ("state", "Main_Panel_Page");
 
     }catch(QSqlError& e){
@@ -308,9 +344,9 @@ int Main_Process::load_panel_obj()
                                       Q_RETURN_ARG(QVariant, _return_value_),//return 값은 NULL
                                       Q_ARG(QVariant, _qml_list_size_parameter_), //Panel_index
                                       Q_ARG(QVariant, _it_obj_["d_name"].toString ()),                //Device_name_string
-                                      Q_ARG(QVariant, _qml_tempture_parameter_),                         //Current_tempture
-                                      Q_ARG(QVariant, 0),                         //Setting_tempture
-                                      Q_ARG(QVariant, _it_obj_["d_pid"].toString ()));
+                    Q_ARG(QVariant, _qml_tempture_parameter_),                         //Current_tempture
+                    Q_ARG(QVariant, 0),                         //Setting_tempture
+                    Q_ARG(QVariant, _it_obj_["d_pid"].toString ()));
 
             //디바이스 메인 패널오브젝트에 add_device() 자바스크립트 파라미터를 input하고 실행함
 
