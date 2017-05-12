@@ -146,7 +146,7 @@ Rectangle_Design_Form {
             width: 108
             height: 113
             color: "#ffffff"
-            radius: 10
+            radius: width* 0.5
             MouseArea{
                 id: account_rectangle_button
                 x: 0
@@ -162,7 +162,7 @@ Rectangle_Design_Form {
                     height: 113
                     smooth: false
                     clip: true
-                    source: "../icon/People_icon.png"
+                    source: "../icon/person_icon_1.png"
                 }
             }
         }
@@ -173,7 +173,8 @@ Rectangle_Design_Form {
             y: 0
             width: 70
             height: 70
-            color: "#ffffff"
+            color: "#34ea9a"
+            border.color: "#070606"
 
             MouseArea{
                 id: side_menu_button_area
@@ -185,11 +186,11 @@ Rectangle_Design_Form {
 
             Image {
                 id: menu_image1
-                x: 0
-                y: 0
-                width: 70
-                height: 70
-                source: "../icon/menu_icon.png"
+                x: 19
+                y: 19
+                width: 32
+                height: 32
+                source: "../icon/menu_icon_1.png"
             }
         }
 
@@ -277,7 +278,9 @@ Rectangle_Design_Form {
             y: 0
             width: 117
             height: 68
-            color: "Orange"
+            color: "#34ea9a"
+            border.width: 1
+            border.color: "#090808"
 
             MouseArea{
                 id:menu_back_button_mouse
@@ -294,7 +297,7 @@ Rectangle_Design_Form {
                 y: 0
                 width: 118
                 height: 70
-                source: "../icon/back_icon.png"
+                source: "../icon/back_icon_1.png"
 
                 Rectangle {
                     id: rectangle

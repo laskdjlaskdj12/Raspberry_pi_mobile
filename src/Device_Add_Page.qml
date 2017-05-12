@@ -133,7 +133,7 @@ Rectangle_Design_Form {
             y: 0
             width: 112
             height: 70
-            color: "#ff8000"
+            color: "#34ea9a"
 
             MouseArea{
                 id: back_to_menu
@@ -149,7 +149,7 @@ Rectangle_Design_Form {
                     width: 112
                     height: 70
                     clip: false
-                    source: "../icon/back_icon.png"
+                    source: "../icon/back_icon_1.png"
                 }
             }
         }
