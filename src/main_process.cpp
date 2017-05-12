@@ -69,8 +69,13 @@ int Main_Process::init_main_object ()
         //states 을 Login_Page로 변경함
         main_window_obj -> setProperty ("state", "Login_Page");
 
-        //ip에디터를
-        login_window_obj->findChild<QObject*> ("ip_editor_alias")->setProperty ("text", ip_login->get_last_ip ());
+        qDebug()<<"[Debug] : last_access_ip is " << ip_login->get_last_ip ();
+
+        //ip 접속 캐시들을 로드함
+        ip_login->load_cache ();
+
+        //ip에디터를 마지막에 편집을 함
+        login_window_obj->setProperty ("ip_editor", ip_login->get_last_ip ());
 
 
         return 0;
@@ -162,17 +167,19 @@ void Main_Process::ip_connect_to_raspberry(QString ip)
             throw QString(" recv device_panel_obj");
         }
 
+        ip_login->save_cache ();
+
         //ip리스트 temp result
         QVariant temp_result;
 
-
         for(uint i = 0; i < ip_login->get_ip_cache_list ().count (); i ++){
+
             QList<QString>::iterator it = ip_login->get_ip_cache_list ().begin ();
 
             // tabbar에 추가할 ip 리스트들을 function문으로 추가
             QMetaObject::invokeMethod(main_indicator_panel_obj,
                                       "add_server_cache_list_panel",
-                                      Q_RETURN_ARG(QVariant, _return_value_),     //return 값은 NULL
+                                      Q_RETURN_ARG(QVariant, temp_result),     //return 값은 NULL
                                       Q_ARG(QVariant, it[i]),                     //ip
                                       Q_ARG(QVariant, false));                    //서버 접속이 됬는지 확인
         }

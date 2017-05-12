@@ -23,7 +23,13 @@ QString Ip_Login_Section::get_ip(){    return ip_;}
 
 QString Ip_Login_Section::get_last_ip(){
 
-    if (ip_cache_list.isEmpty ()){  return QString("127.0.0.1");}
+    if (ip_cache_list.isEmpty ()){
+
+        qDebug()<<"[Debug] : ip_cache_list is empty";
+
+        return QString("127.0.0.1");
+    }
+
     else return ip_cache_list.last ();
 }
 
@@ -33,7 +39,7 @@ void Ip_Login_Section::set_ip(QString ip){  ip_ = ip;}
 
 int Ip_Login_Section::login_to_device()
 {
-    try{
+    try {
 
         QJsonDocument _doc_;
         QHostAddress addr(ip_);
@@ -48,21 +54,27 @@ int Ip_Login_Section::login_to_device()
 
         else if (_doc_.object ()["connect"].toBool () == true){      return 0;}
 
-        else{   throw Boiler_Controler_Exception(QString("Error of recv"), __LINE__); }
+        else {   throw Boiler_Controler_Exception(QString("Error of recv"), __LINE__); }
 
         lib->disconnect_server ();
 
-        ip_cache_list.append (ip_);
-
-        //캐시 ip를 저장함
-        save_server_cache ();
         return 0;
 
-    }catch(Boiler_Controler_Exception& e){
+    } catch (Boiler_Controler_Exception& e){
 
         e.get_error ();
         return -1;
     }
+}
+
+void Ip_Login_Section::save_cache()
+{
+    save_server_cache ();
+}
+
+void Ip_Login_Section::load_cache()
+{
+    load_server_cache ();
 }
 
 
@@ -79,32 +91,60 @@ QJsonObject Ip_Login_Section::send_connect_Json_Synctes()
 
 void Ip_Login_Section::save_server_cache()
 {
-    QFile jsonFile("server_cache_list.txt");
-    jsonFile.open (QFile::ReadWrite);
-    QJsonObject save_obj;
+    try {
 
-    QList<QString>::iterator it = ip_cache_list.begin ();
+        ip_cache_list.append (ip_);
 
-    for(uint i = 0; i < ip_cache_list.count (); i++){
-        save_obj[i] = it[i];
+        QFile jsonFile(QStandardPaths::writableLocation(QStandardPaths::HomeLocation).append("/Documents/server_cache_list.txt"));
+
+        if (jsonFile.open (QFile::ReadWrite) == false){ throw Boiler_Controler_Exception(jsonFile.errorString (), __LINE__);}
+
+        qDebug()<<"[Debug] : open is complete";
+
+        QJsonObject save_obj;
+
+        QList<QString>::iterator it = ip_cache_list.begin ();
+
+        for(int i = 0; i < ip_cache_list.count (); i++){
+            save_obj[QString::number (i)] = it[i];
+        }
+
+        jsonFile.write(QJsonDocument(save_obj).toJson ());
+
+        jsonFile.close ();
+
+    } catch (Boiler_Controler_Exception& e){
+
+        e.get_error ();
     }
-
-    jsonFile.write(QJsonDocument(save_obj).toJson ());
 }
 
 void Ip_Login_Section::load_server_cache()
 {
-    //캐시 리스트 불러오기
-    QFile jsonFile("server_cache_list.txt");
-    jsonFile.open (QFile::ReadWrite);
-    QJsonDocument temp_json_doc = fromJson (jsonFile.readAll ());
+    try {
 
-    if (temp_json_doc.object ().count () != 0 || ! temp_json_doc.isNull ()){
+        //캐시 리스트 불러오기
+        QFile jsonFile(QStandardPaths::writableLocation(QStandardPaths::HomeLocation).append("/Documents/server_cache_list.txt"));
 
-        //캐시 insert
-        for(int i = 0; i < temp_json_doc.object ().count () ; i++){
-            ip_cache_list.append (temp_json_doc.object ()[i].toString ());
+        if (jsonFile.open (QFile::ReadWrite) == false){ throw Boiler_Controler_Exception(jsonFile.errorString (), __LINE__);}
+
+        qDebug()<<"[Debug] : open is complete";
+
+        QJsonDocument temp_json_doc = QJsonDocument().fromJson (jsonFile.readAll ());
+
+        if (temp_json_doc.object ().count () != 0 || ! temp_json_doc.isNull ()){
+
+            //캐시 insert
+            for(int i = 0; i < temp_json_doc.object ().count () ; i++){
+                ip_cache_list.append (temp_json_doc.object ()[QString::number (i)].toString ());
+            }
         }
+
+        jsonFile.close ();
+
+    } catch (Boiler_Controler_Exception& e){
+
+        e.get_error ();
     }
 }
 
@@ -116,7 +156,7 @@ void Ip_Login_Section::check_ip_connect(QString ip)
         is_connect = true;
     }
 
-    else{
+    else {
 
         is_connect = false;
     }

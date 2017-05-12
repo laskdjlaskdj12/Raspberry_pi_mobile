@@ -3,11 +3,12 @@
 
 #include <QFile>
 #include <QObject>
-#include "qt_json_socket_lib.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QHostAddress>
+#include <QStandardPaths>
+#include "qt_json_socket_lib.h"
 #include "boiler_controler_exception.h"
 
 class Ip_Login_Section : public QObject
@@ -25,6 +26,9 @@ public:
 
     int login_to_device();
     void logout_to_Device();
+
+    void save_cache();
+    void load_cache();
 
 private:
     QJsonObject send_connect_Json_Synctes();

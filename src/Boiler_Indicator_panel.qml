@@ -86,12 +86,7 @@ Rectangle_Design_Form {
         var penl_size = tab_bar_list_model.count;
         for(var i = 0; i < penl_size; i++){
 
-            if ( dial_list.get(i).panel_index == panel_ip){
-
-                dial_list.get(i).panel_states_color = color;
-
-            }
-
+            tab_bar_list_model.get(i).panel_index = i;
         }
     }
 
@@ -99,7 +94,7 @@ Rectangle_Design_Form {
     function change_server_states( is_active, ip){
 
         var color;
-        if ( is_alive == false){
+        if ( is_active == false){
             color = "Red"
         }
         else {
@@ -108,7 +103,7 @@ Rectangle_Design_Form {
 
         for(var i = 0; i < tab_bar_list_model.count; i++){
             if ( tab_bar_list_model.get(i).panel_ip == ip){
-
+                 tab_bar_list_model.get(i).panel_states_color = color;
             }
         }
     }
@@ -307,10 +302,11 @@ Rectangle_Design_Form {
             text: qsTr("Add")
             onClicked: {
 
-                main_indicator_panel.state = "Add_Device_state"
+                //main_indicator_panel.state = "Add_Device_state"
 
                 //디바이스들 추가시 실험할때 사용함
                 //add_device(dial_list.count, dial_list.count, 0, 0, "12321")
+                add_server_cache_list_panel("127.0.0.1", false);
 
             }
 
