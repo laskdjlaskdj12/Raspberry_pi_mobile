@@ -266,6 +266,7 @@ Rectangle_Design_Form {
         y: 0
         width: 200
         height: parent.height
+        border.color: "#000000"
         //Material.background: Material.Red
         visible: true
 
@@ -278,7 +279,7 @@ Rectangle_Design_Form {
             y: 0
             width: 117
             height: 70
-            color: "#34ea9a"
+            color: "#fbb03b"
             border.width: 1
             border.color: "#090808"
 
@@ -305,7 +306,7 @@ Rectangle_Design_Form {
                 y: 0
                 width: 82
                 height: 70
-                color: "#34ea9a"
+                color: "#fbb03b"
                 anchors.left: parent.right
                 anchors.leftMargin: 0
             }

@@ -48,6 +48,7 @@ Rectangle_Design_Form {
         y: 531
         width: 236
         height: 64
+        highlighted: true
         text: qsTr("Add")
         onClicked: {
             console.log("[Info] : add_device_to_raspberry : ",add_device_name," : ",add_device_gpio," : ",add_device_type)
@@ -134,6 +135,7 @@ Rectangle_Design_Form {
             width: 112
             height: 70
             color: "#34ea9a"
+            border.color: "#020202"
 
             MouseArea{
                 id: back_to_menu
