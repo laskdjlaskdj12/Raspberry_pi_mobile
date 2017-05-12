@@ -15,24 +15,35 @@ Rectangle {
     width: 200
     height: 32
 
-    Text {
-        id: text2
-        x: 16
+    Rectangle {
+        id: rectangle
+        x: 0
         y: 0
-        width: 129
+        width: 200
         height: 32
-        text: panel_ip
-        horizontalAlignment: Text.AlignLeft
-        verticalAlignment: Text.AlignVCenter
-        font.pixelSize: 18
+        color: "#ffffff"
+        border.color: "Pink"
+        border.width: 2
 
-        Rectangle {
-            x: 150
-            y: 4
-            width: 25
-            height: 24
-            color: panel_states_color
-            radius: width*0.5
+        Text {
+            id: text2
+            x: 16
+            y: 0
+            width: 129
+            height: 32
+            text: panel_ip
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
+            font.pixelSize: 18
+
+            Rectangle {
+                x: 150
+                y: 4
+                width: 25
+                height: 24
+                color: panel_states_color
+                radius: width*0.5
+            }
         }
     }
 }

@@ -293,8 +293,18 @@ Rectangle_Design_Form {
                 x: 0
                 y: 0
                 width: 118
-                height: 68
+                height: 70
                 source: "../icon/back_icon.png"
+
+                Rectangle {
+                    id: rectangle
+                    y: 0
+                    width: 82
+                    height: 70
+                    color: "#34ea9a"
+                    anchors.left: parent.right
+                    anchors.leftMargin: 0
+                }
             }
         }
 
@@ -369,6 +379,7 @@ Rectangle_Design_Form {
             text: qsTr("")
             z: -6
             smooth: false
+            highlighted: true
             onClicked: {
                 dial_list.remove(listView.currentIndex)
             }
@@ -385,6 +396,9 @@ Rectangle_Design_Form {
         Button {
             id: add_button
             text: qsTr("")
+            highlighted: true
+            enabled: true
+            clip: false
             smooth: false
             onClicked: {
 
