@@ -144,9 +144,9 @@ Rectangle_Design_Form {
 
                 Image {
                     id: menu_image
-                    x: 0
+                    x: 22
                     y: 0
-                    width: 112
+                    width: 68
                     height: 70
                     clip: false
                     source: "../icon/back_icon_1.png"

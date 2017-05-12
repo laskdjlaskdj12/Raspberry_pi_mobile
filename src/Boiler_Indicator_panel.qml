@@ -156,7 +156,7 @@ Rectangle_Design_Form {
 
                 Image {
                     id: person_icon
-                     x: 0
+                    x: 0
                     y: 0
                     width: 108
                     height: 113
@@ -277,7 +277,7 @@ Rectangle_Design_Form {
             x: 0
             y: 0
             width: 117
-            height: 68
+            height: 70
             color: "#34ea9a"
             border.width: 1
             border.color: "#090808"
@@ -293,21 +293,21 @@ Rectangle_Design_Form {
 
             Image {
                 id: menu_image
-                x: 0
+                x: 24
                 y: 0
-                width: 118
+                width: 68
                 height: 70
                 source: "../icon/back_icon_1.png"
+            }
 
-                Rectangle {
-                    id: rectangle
-                    y: 0
-                    width: 82
-                    height: 70
-                    color: "#34ea9a"
-                    anchors.left: parent.right
-                    anchors.leftMargin: 0
-                }
+            Rectangle {
+                id: rectangle
+                y: 0
+                width: 82
+                height: 70
+                color: "#34ea9a"
+                anchors.left: parent.right
+                anchors.leftMargin: 0
             }
         }
 
@@ -472,13 +472,15 @@ Rectangle_Design_Form {
             PropertyChanges {
                 target: menu_back_button
                 width: 117
-                height: 68
+                height: 70
             }
 
             PropertyChanges {
                 target: menu_image1
-                width: 70
-                height: 70
+                x: 19
+                y: 19
+                width: 32
+                height: 32
             }
 
         },
