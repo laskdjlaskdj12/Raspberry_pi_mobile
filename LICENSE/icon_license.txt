@@ -1,0 +1,4 @@
+icon is used by 
+
+add_icon, remove_icon : http://iconshow.me/add-icon-6
+menu_icon,people_icon,back_button_icon : http://fontawesome.io/icon
