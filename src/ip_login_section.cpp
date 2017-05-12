@@ -136,7 +136,22 @@ void Ip_Login_Section::load_server_cache()
 
             //캐시 insert
             for(int i = 0; i < temp_json_doc.object ().count () ; i++){
-                ip_cache_list.append (temp_json_doc.object ()[QString::number (i)].toString ());
+
+                bool is_exsist = false;
+
+                //만약 해당 서버 캐시가 있다면 그냥 continue함
+                for( QList<QString>::iterator j = ip_cache_list.begin (); j != ip_cache_list.end (); j ++ ){
+
+                    if((*j) == temp_json_doc.object ()[QString::number (i)].toString ()){
+
+                        is_exsist = true;
+                    }
+                }
+
+                if(is_exsist == true){  continue;}
+
+                //해당 캐시가 없다면 append함
+                ip_cache_list.append ( temp_json_doc.object ()[QString::number (i)].toString () );
             }
         }
 

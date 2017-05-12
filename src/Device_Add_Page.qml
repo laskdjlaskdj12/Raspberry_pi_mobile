@@ -1,7 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.0
-import QtQuick.Controls.Material 2.1
+//import QtQuick.Controls.Material 2.1
 
 Rectangle_Design_Form {
 
@@ -55,23 +55,6 @@ Rectangle_Design_Form {
             gpio_field.value = 0
             device_name_field.text = qsTr("")
             device_type_field.text = qsTr("")
-        }
-    }
-
-    Rectangle {
-        id: rectangle
-        x: 0
-        y: 0
-        width: 112
-        height: 62
-        color: "#ff8000"
-
-        MouseArea{
-            id: back_to_menu
-            x: 0
-            y: 0
-            width: parent.width
-            height: parent.height
         }
     }
 
@@ -132,6 +115,43 @@ Rectangle_Design_Form {
             id: gpio_field
             Layout.preferredHeight: 57
             Layout.preferredWidth: 167
+        }
+    }
+
+    Rectangle {
+        id: menu_bar
+        x: 0
+        y: 0
+        width: 375
+        height: 70
+        color: "#34ea9a"
+        radius: 4
+
+        Rectangle {
+            id: rectangle
+            x: 0
+            y: 0
+            width: 112
+            height: 70
+            color: "#ff8000"
+
+            MouseArea{
+                id: back_to_menu
+                x: 0
+                y: 0
+                width: parent.width
+                height: parent.height
+
+                Image {
+                    id: menu_image
+                    x: 0
+                    y: 0
+                    width: 112
+                    height: 70
+                    clip: false
+                    source: "../icon/back_icon.png"
+                }
+            }
         }
     }
 

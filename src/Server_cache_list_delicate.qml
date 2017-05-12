@@ -17,16 +17,17 @@ Rectangle {
 
     Text {
         id: text2
-        x: 0
-        width: 200
+        x: 16
+        y: 0
+        width: 129
         height: 32
         text: panel_ip
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter
-        font.pixelSize: 20
+        font.pixelSize: 18
 
         Rectangle {
-            x: 167
+            x: 150
             y: 4
             width: 25
             height: 24
@@ -34,49 +35,6 @@ Rectangle {
             radius: width*0.5
         }
     }
-
-    //mouse area 는 나중에 추가할것
-    /*MouseArea {
-        id: server_list_delicate_mouse_area1
-        x: 0
-        y: 0
-        width: parent.width
-        height: parent.height
-    }*/
 }
 
-/*Rectangle{
-    id: server_list_delicate
-    x: 0
-    y: 83
-    width: 200
-    height: 32
-    MouseArea{
-        id: server_list_delicate_mouse_area
-        width: parent.width
-        height: parent.height
-        onClicked: {
 
-        }
-    }
-
-    Text {
-        id: text1
-        x: 0
-        width: 200
-        height: 32
-        text: qsTr("127.0.0.1")
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignLeft
-        font.pixelSize: 20
-
-        Rectangle{
-            x: 167
-            y: 4
-            height: 24
-            color: "#64e96b"
-            width: 25
-            radius: width*0.5
-        }
-    }
-}*/

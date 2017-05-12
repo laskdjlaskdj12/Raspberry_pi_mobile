@@ -69,10 +69,10 @@ int Main_Process::init_main_object ()
         //states 을 Login_Page로 변경함
         main_window_obj -> setProperty ("state", "Login_Page");
 
-        qDebug()<<"[Debug] : last_access_ip is " << ip_login->get_last_ip ();
-
         //ip 접속 캐시들을 로드함
         ip_login->load_cache ();
+
+        qDebug()<<"[Debug] : last_access_ip is " << ip_login->get_last_ip ();
 
         //ip에디터를 마지막에 편집을 함
         login_window_obj->setProperty ("ip_editor", ip_login->get_last_ip ());

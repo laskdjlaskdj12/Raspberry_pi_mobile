@@ -103,7 +103,7 @@ Rectangle_Design_Form {
 
         for(var i = 0; i < tab_bar_list_model.count; i++){
             if ( tab_bar_list_model.get(i).panel_ip == ip){
-                 tab_bar_list_model.get(i).panel_states_color = color;
+                tab_bar_list_model.get(i).panel_states_color = color;
             }
         }
     }
@@ -123,6 +123,7 @@ Rectangle_Design_Form {
     y: 0
     width: 375
     height: 667
+    property alias menu_back_button: menu_back_button
     objectName: "boiler_main_panel"
     //Material.theme: Material.Dark
     //Material.accent: Material.Purple
@@ -133,7 +134,7 @@ Rectangle_Design_Form {
         y: 0
         width: 375
         height: 70
-        color: "#ffffff"
+        color: "#34ea9a"
         radius: 4
         //Material.accent: Material.Purple
 
@@ -151,6 +152,17 @@ Rectangle_Design_Form {
                 y: 0
                 width: parent.width
                 height: parent.height
+
+                Image {
+                    id: person_icon
+                     x: 0
+                    y: 0
+                    width: 108
+                    height: 113
+                    smooth: false
+                    clip: true
+                    source: "../icon/People_icon.png"
+                }
             }
         }
 
@@ -158,9 +170,9 @@ Rectangle_Design_Form {
             id: side_menu_button
             x: 0
             y: 0
-            width: 123
+            width: 70
             height: 70
-            color: "Orange"
+            color: "#ffffff"
 
             MouseArea{
                 id: side_menu_button_area
@@ -168,6 +180,15 @@ Rectangle_Design_Form {
                 y: 0
                 width: parent.width
                 height: parent.height
+            }
+
+            Image {
+                id: menu_image1
+                x: 0
+                y: 0
+                width: 70
+                height: 70
+                source: "../icon/menu_icon.png"
             }
         }
 
@@ -246,17 +267,16 @@ Rectangle_Design_Form {
         //Material.background: Material.Red
         visible: true
 
+
+
         Rectangle {
 
             id: menu_back_button
+            x: 0
             y: 0
-            anchors.left: parent.left
-            anchors.right: parent.right
-            width: 200
-            height: 70
+            width: 117
+            height: 68
             color: "Orange"
-            anchors.leftMargin: 0
-            opacity: 0
 
             MouseArea{
                 id:menu_back_button_mouse
@@ -266,6 +286,15 @@ Rectangle_Design_Form {
                 width: parent.width
                 height: parent.height
             }
+
+            Image {
+                id: menu_image
+                x: 0
+                y: 0
+                width: 118
+                height: 68
+                source: "../icon/back_icon.png"
+            }
         }
 
         //탭바의 리스트뷰
@@ -274,12 +303,56 @@ Rectangle_Design_Form {
 
             id: tab_bar_list_view
             x: 0
-            y: 115
+            y: 232
             width: 200
-            height: 532
+            height: 409
             model: tab_bar_list_model
             delegate: Server_cache_list_delicate{}
             clip: true
+        }
+
+        Rectangle {
+            id: add_tab_button
+            x: 8
+            y: 109
+            width: 184
+            height: 38
+            color: "#ffffff"
+            visible: false
+
+            Text {
+                id: text1
+                x: 57
+                y: 4
+                width: 71
+                height: 30
+                text: qsTr("ADD")
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 20
+            }
+        }
+
+        Rectangle {
+            id: remove_tab_remove
+            x: 8
+            y: 153
+            width: 184
+            height: 38
+            color: "#ffffff"
+            visible: false
+
+            Text {
+                id: text2
+                x: 25
+                y: 3
+                width: 135
+                height: 32
+                text: "REMOVE"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font.pixelSize: 20
+            }
         }
     }
 
@@ -293,6 +366,8 @@ Rectangle_Design_Form {
         Button {
             id: remove_button
             text: qsTr("Remove")
+            z: -6
+            smooth: false
             onClicked: {
                 dial_list.remove(listView.currentIndex)
             }
@@ -300,13 +375,16 @@ Rectangle_Design_Form {
         Button {
             id: add_button
             text: qsTr("Add")
+            smooth: false
             onClicked: {
 
-                //main_indicator_panel.state = "Add_Device_state"
+                main_indicator_panel.state = "Add_Device_state"
 
                 //디바이스들 추가시 실험할때 사용함
                 //add_device(dial_list.count, dial_list.count, 0, 0, "12321")
-                add_server_cache_list_panel("127.0.0.1", false);
+
+                //디바이스 탭서버 추가시 사용함
+                //add_server_cache_list_panel("127.0.0.1", false);
 
             }
 
@@ -357,8 +435,14 @@ Rectangle_Design_Form {
 
             PropertyChanges {
                 target: menu_back_button
-                width: 240
-                height: 66
+                width: 117
+                height: 68
+            }
+
+            PropertyChanges {
+                target: menu_image1
+                width: 70
+                height: 70
             }
 
         },
@@ -375,8 +459,10 @@ Rectangle_Design_Form {
 
             PropertyChanges {
                 target: menu_back_button
-                width: 240
-                height: 71
+                x: 0
+                y: 0
+                width: 117
+                height: 68
             }
 
             PropertyChanges {
