@@ -18,5 +18,7 @@
         <file>../icon/back_icon.png</file>
         <file>../icon/menu_icon.png</file>
         <file>../icon/People_icon.png</file>
+        <file>../icon/add_icon.png</file>
+        <file>../icon/remove_icon.png</file>
     </qresource>
 </RCC>

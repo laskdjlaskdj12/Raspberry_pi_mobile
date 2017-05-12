@@ -3,6 +3,7 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.2
 import QtQml.Models 2.2
+
 //import QtQuick.Controls.Material 2.1
 
 Rectangle_Design_Form {
@@ -303,7 +304,7 @@ Rectangle_Design_Form {
 
             id: tab_bar_list_view
             x: 0
-            y: 232
+            y: 153
             width: 200
             height: 409
             model: tab_bar_list_model
@@ -365,16 +366,25 @@ Rectangle_Design_Form {
 
         Button {
             id: remove_button
-            text: qsTr("Remove")
+            text: qsTr("")
             z: -6
             smooth: false
             onClicked: {
                 dial_list.remove(listView.currentIndex)
             }
+
+            Image {
+                id: add_button_icon1
+                x: 15
+                y: 9
+                width: 34
+                height: 31
+                source: "../icon/remove_icon.png"
+            }
         }
         Button {
             id: add_button
-            text: qsTr("Add")
+            text: qsTr("")
             smooth: false
             onClicked: {
 
@@ -386,6 +396,15 @@ Rectangle_Design_Form {
                 //디바이스 탭서버 추가시 사용함
                 //add_server_cache_list_panel("127.0.0.1", false);
 
+            }
+
+            Image {
+                id: add_button_icon
+                x: 15
+                y: 9
+                source: "../icon/add_icon.png"
+                width: 34
+                height: 31
             }
 
         }
