@@ -4,6 +4,8 @@
 
 This is control raspberry pi GPIO Sorvo Moter with Wiring Pi
 
+source code of Raspberry_pi_dial_device is here
+https://github.com/laskdjlaskdj12/Raspberry_pi_mobile
 
 This source code require library in Qt_Json_socket_lib
 https://github.com/laskdjlaskdj12/Qt_Json_socket_lib
