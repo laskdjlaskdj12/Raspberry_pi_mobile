@@ -1,6 +1,8 @@
 # Raspberry_pi_mobile
 
-##WARNING This is only confirm in IOS 10 Android will be avail soon when QtCreator is stable
+## WARNING
+
+This is only confirm in IOS 10 Android will be avail soon when QtCreator is stable
 
 This is control raspberry pi GPIO Sorvo Moter with Wiring Pi
 
@@ -10,7 +12,7 @@ https://github.com/laskdjlaskdj12/Raspberry_pi_mobile
 This source code require library in Qt_Json_socket_lib
 https://github.com/laskdjlaskdj12/Qt_Json_socket_lib
 
-##Build
+## Build
 
 == if you don't have Qt_Json_socket_library This is download and build process for Qt_Json_socket_lib ==
 
